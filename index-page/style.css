@@ -1,0 +1,181 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+}
+
+/* Typography/spacing ported from the same Figma top-nav frame used on
+   index.html/about-page.html (style.css/about.css) — kept as a separate
+   copy here rather than a shared stylesheet since this page already has its
+   own self-contained style.css/sketch.js. */
+.top-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+  display: flex;
+  align-items: top;
+  padding: 0.875rem 1.25rem;
+  background: var(--bg);
+  font-family: "IBM Plex Mono", monospace;
+  font-weight: 400;
+  font-size: 12.5px;
+  letter-spacing: 0.25em;
+}
+
+.nav-block {
+  display: flex;
+  align-items: top;
+  gap: 0.75rem;
+}
+
+/* Figma spec: 163px gap between "About" and "Overview / Index" at the
+   1920px reference frame (163/1920 = 8.49vw). */
+.nav-left {
+  margin-right: auto;
+  gap: 8.49vw;
+}
+
+.nav-right {
+  margin-left: auto;
+}
+
+.top-nav a {
+  color: inherit;
+  text-decoration: none;
+}
+.top-nav a:hover {
+  text-decoration: underline;
+}
+
+
+.nav-logo {
+  width: 35vw;
+  height: auto;
+  display: block;
+  padding-right: 9vw;
+  fill: currentColor;
+}
+
+/* padding-top is set in sketch.js from the nav's real measured height, so
+   rows never render underneath the fixed nav — min-height (not height) so
+   that once the rows need more room than one screen (18 of them reliably
+   do), the page just scrolls normally instead of clipping.
+
+   gap is a fixed 88px — the same as .row's own height below — so the space
+   between rows always reads as "one empty row," regardless of row count or
+   viewport height. (An earlier version used justify-content: space-between
+   with no gap instead, relying on the container's min-height:100vh leftover
+   space to create even spacing — that only worked while 5 rows fit inside
+   one screen with room to spare; once row count grew enough to overflow
+   100vh, there was no leftover space left to distribute and rows packed
+   together with no gap at all.) */
+.column {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 88px;
+}
+
+/* justify-content: space-between always — it's what turns the
+   growing/shrinking visible-image count into changing gaps automatically,
+   no gap value is ever set. The one exception is exactly 1 visible image:
+   space-between would just left-align a lone item instead of centering it,
+   so sketch.js toggles .single-img for that case specifically. */
+/* Fixed to a portrait image's height at the 64px image width (portrait
+   ratio 380:525, same convention used elsewhere in this project) — 64 *
+   525/380 ≈ 88px, rounded — so row height never shifts depending on which
+   orientation of image happens to be showing. align-items: flex-start
+   keeps everything top-aligned; shorter (landscape) images just leave empty
+   space below within the fixed row height. overflow: hidden clips the rare
+   image that's taller than this ratio instead of breaking the row height. */
+.row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  width: 100%;
+  height: 88px;
+  overflow: hidden;
+}
+
+.row.single-img {
+  justify-content: center;
+}
+
+/* Only a subset of a row's 9-image pool is ever in the DOM (sketch.js) — an
+   image starts collapsed so the insert-then-add-"visible" sequence there
+   has something to transition from. */
+.row img {
+  width: 0;
+  opacity: 0;
+  height: auto;
+  flex-shrink: 0;
+  display: block;
+}
+
+.row img.visible {
+  width: 64px;
+  opacity: 1;
+}
+
+.col-slider-wrap {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: "IBM Plex Mono", monospace;
+  font-weight: 400;
+  font-size: 12.5px;
+  letter-spacing: 0.25em;
+}
+
+/* Plain horizontal line for the track (no rounded pill/groove) and a black
+   vertical line for the thumb instead of the default round handle, to match
+   the site's flat, linear visual language elsewhere (see e.g. the row-title
+   counters). -webkit/-moz thumb and track are styled separately since
+   neither engine reads the other's pseudo-elements. */
+.col-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12rem;
+  height: 1px;
+  background: var(--fg);
+  outline: none;
+  cursor: pointer;
+}
+
+.col-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 2px;
+  height: 18px;
+  background: var(--fg);
+  border-radius: 0;
+  cursor: pointer;
+}
+
+.col-slider::-moz-range-thumb {
+  width: 2px;
+  height: 18px;
+  background: var(--fg);
+  border: none;
+  border-radius: 0;
+  cursor: pointer;
+}
+
+.col-slider::-moz-range-track {
+  width: 100%;
+  height: 1px;
+  background: var(--fg);
+}

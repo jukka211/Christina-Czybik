@@ -1,0 +1,61 @@
+/* Site-wide black/white theme — shared across index.html, about-page.html,
+   and index-page/index.html (linked before each page's own stylesheet).
+   --bg/--fg are the only two variables the rest of the site's CSS needs to
+   reference for its colors to invert; body.theme-black (toggled by
+   theme-toggle.js, persisted via localStorage) redefines them. Anything
+   still using a literal #fff/#000 instead of these variables (e.g. an
+   element that needs an opaque background over scrolling content) won't
+   invert with the theme — see #bottomFooter and .top-nav in the per-page
+   stylesheets, which were updated to use these variables for exactly that
+   reason. */
+:root {
+  --bg: #fff;
+  --fg: #000;
+}
+
+body.theme-black {
+  --bg: #000;
+  --fg: #fff;
+}
+
+html,
+body {
+  background: var(--bg);
+  color: var(--fg);
+}
+
+.theme-toggle {
+  position: fixed;
+  left: 0.15rem;
+  bottom: 0.15rem;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  gap: 0.4em;
+  font-family: "IBM Plex Mono", monospace;
+  font-weight: 400;
+  font-size: 12.5px;
+  letter-spacing: 0.25em;
+}
+
+.theme-btn {
+  font: inherit;
+  letter-spacing: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+/* The non-selected option is dimmed rather than hidden, so both stay
+   visible and clickable at once — same "which one is active" convention as
+   the column slider's own two endpoint labels elsewhere in this project.
+   Shared beyond .theme-btn so the top-nav's own current-page/current-mode
+   pairs (e.g. Overview/Index, Kategorie/Projekte) can use the same
+   dim-not-hide treatment. */
+.theme-btn.is-inactive,
+.is-inactive {
+  opacity: 0.35;
+}

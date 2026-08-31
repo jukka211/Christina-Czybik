@@ -1,0 +1,330 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+}
+
+/* transform is set every scroll frame by updateTopNav() in sketch.js — no
+   transition on it (see that function for why: it already runs in lockstep
+   with the row stack's own per-frame, transition-free movement, so easing
+   here would only put it out of sync again). opacity is the one property
+   that still transitions, for the separate fullscreen fade below. */
+.top-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+  display: flex;
+  align-items: top;
+  padding: 0.875rem 1.25rem;
+  font-family: "IBM Plex Mono", monospace;
+  font-weight: 400;
+  font-size: 12.5px;
+  letter-spacing: 0.25em;
+  transition: opacity 0.4s ease;
+  will-change: transform;
+}
+
+/* Toggled in sketch.js's update() for as long as any row is fullscreen —
+   opacity + pointer-events, not display: none, so it fades rather than
+   snapping and doesn't disturb layout underneath. Shared by the top nav and
+   the bottom footer (#bottomFooter below), which both hide the same way
+   while fullscreen covers the viewport. */
+.nav-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.nav-block {
+  display: flex;
+  align-items: top;
+  gap: 0.75rem;
+}
+
+/* Figma spec: 163px gap between "About" and "Overview / Index" at the
+   1920px reference frame (163/1920 = 8.49vw) — much wider than a normal
+   nav-link gap, so it needs its own override rather than the shared
+   .nav-block gap above. */
+.nav-left {
+  margin-right: auto;
+  gap: 8.49vw;
+}
+
+.nav-right {
+  margin-left: auto;
+}
+
+.top-nav a {
+  color: inherit;
+  text-decoration: none;
+}
+.top-nav a:hover {
+  text-decoration: underline;
+}
+.nav-logo {
+  width: 35vw;
+  height: auto;
+  display: block;
+  padding-right: 9vw;
+  fill: currentColor;
+}
+
+#bottomLogo {
+  padding-left: 0vw;
+  width: 16vw;
+}
+
+.bottom-logo-wrap {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  padding: 0.6rem 0.9rem;
+  pointer-events: none;
+}
+
+/* Mirrors .top-nav's own slide (see updateTopNav in sketch.js): fixed to
+   the bottom instead of the top, pushed down out of view instead of up.
+   sketch.js's updateBottomFooter drives this off the *last* row's collapse
+   distance instead of row 0's, with a positive translateY instead of
+   negative — same lockstep-with-the-row-stack logic as the top nav, just
+   reversed, so the footer slides up into view as the stack reaches its
+   final row instead of sliding away as it leaves the first.
+
+   .about-footer (about.css) supplies the shared content layout; this reuses
+   it as-is on the homepage rather than duplicating it, and only overrides
+   position here. Font styling is repeated here (not inherited from
+   .about-main, which only wraps this footer on about-page.html) so the text
+   matches the site's font instead of the browser default. */
+#bottomFooter {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  z-index: 100;
+  background: var(--bg);
+  font-family: "IBM Plex Mono", monospace;
+  font-weight: 400;
+  font-size: 12.5px;
+  letter-spacing: 0.1em;
+  line-height: 1.275;
+  color: var(--fg);
+  transition: opacity 0.4s ease;
+  will-change: transform;
+}
+
+.contact-container p:hover{
+  text-decoration: underline;
+}
+/* Tall scroll spacer — its length is how far you scroll to move through all rows */
+.stack-wrapper {
+  position: relative;
+  height: 850vh;
+}
+
+.sticky-viewport {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* Not a flex container — sketch.js positions every image itself (a ported
+   copy of the cumulative-offset stacking in HomePageClient.tsx), each one
+   absolutely placed via its own transform. .row is just this stack's
+   viewport: overflow: hidden clips whatever's mounted but currently sits
+   outside the row's own bounds. cursor: pointer here is just the pre-JS
+   fallback — sketch.js swaps it per zone on mousemove (w-resize/e-resize
+   over the left/right step zones, zoom-in/zoom-out over the center
+   fullscreen zone). */
+.row {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  transform-origin: center;
+  cursor: pointer;
+  will-change: transform, height;
+}
+
+/* Static label above each row's image content — category + image count,
+   both hardcoded text (see ROW_TITLES in sketch.js), not computed from the
+   row's real activeIndex/pool. A sibling of .row rather than a child of it
+   (both direct children of .sticky-viewport, same positioned ancestor, same
+   top: 50% reference line .row itself uses) — living inside .row would mean
+   sitting inside its overflow: hidden clip, pinned to its top edge and so
+   overlaying the image underneath; as its own element it's free to sit in
+   the gap above the row instead. sketch.js's updateRowTitles repositions it
+   every scroll frame from the row's own real top edge, same
+   lockstep-with-the-row-stack reasoning as updateTopNav/updateBottomFooter.
+
+   Two layouts, per Figma nodes 17:121 (large) and 17:124 (small) — both
+   full width with the same 20px/1.25rem inset as the top-nav, so the
+   category doesn't visibly shift horizontally when the layout switches, only
+   the count appearing/disappearing and the category's own alignment
+   changing. Default (large, this rule) is category flush left + count
+   flush right via space-between; .row-title.is-small below overrides that
+   once sketch.js's updateRowTitles applies it. pointer-events: none so it
+   never intercepts clicks meant for the row underneath. */
+.row-title {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0px 1.25rem;
+  font-family: "IBM Plex Mono", monospace;
+  font-weight: 400;
+  font-size: 13px;
+  letter-spacing: 0.25em;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+  will-change: transform;
+}
+
+/* The small layout (Figma 17:124): only the bare category name, centered in
+   the same full-width bar — "Kat.:" and the count both hidden entirely, not
+   faded, since there's nothing to crossfade between two structurally
+   different layouts (space-between vs. centered). Toggled by sketch.js once
+   a row collapses past the halfway point toward its neighbor. */
+.row-title.is-small {
+  justify-content: center;
+}
+
+.row-title.is-small .row-title-type,
+.row-title.is-small .row-title-count {
+  display: none;
+}
+
+/* Fullscreen mode's own title bar (Figma node 14:75) — a different layout
+   from .row-title above: full width edge-to-edge (same 20px/1.25rem inset
+   as the top-nav) with justify-content: space-between, rather than a
+   hug-width block centered in the middle. "Kat." and the category name sit
+   close together (8px gap) as one compact label on the left; the count
+   sits flush right. Vertically centered on the viewport (top: 50% +
+   translateY(-50%), same centering trick .row-title and .row > img use).
+
+   Always in the layout (display: flex, not display: none) so its opacity
+   transition actually has something to animate — hidden by default via
+   opacity: 0 and only faded in via .is-visible, which sketch.js's update()
+   toggles alongside fullscreenRowIndex, the opposite direction from
+   .nav-hidden elsewhere (those fade OUT during fullscreen; this fades IN). */
+.fullscreen-title {
+  position: fixed;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  transform: translateY(-50%);
+  z-index: 50;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2px 1.25rem;
+  font-family: "IBM Plex Mono", monospace;
+  font-weight: 400;
+  font-size: 13px;
+  letter-spacing: 0.25em;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.fullscreen-title.is-visible {
+  opacity: 1;
+}
+
+.fullscreen-title-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Adds a transition just for entering/exiting fullscreen — sketch.js toggles
+   this class on for FULLSCREEN_TRANSITION_MS around that one change and
+   removes it again afterward, so regular scroll-driven row movement (which
+   doesn't carry this class) stays instant as before; only the fullscreen
+   jump itself animates. */
+.row.fullscreen-transition {
+  transition: height 0.4s ease, transform 0.4s ease, opacity 0.4s ease;
+}
+
+.row.fullscreen-transition > img {
+  transition: width 0.4s ease, height 0.4s ease, transform 0.4s ease;
+}
+
+/* Base position only — width, height, and transform (translate, to offset
+   from this centered base point) are all set inline per image by
+   sketch.js whenever activeIndex changes; no transition here by default,
+   switching is an instant snap (see .fullscreen-transition above for the
+   one exception). object-fit: contain fits each image inside its box
+   without cropping, and object-position centers it within any resulting
+   empty space. > (direct children only) so none of this leaks into
+   .row-column's own nested images below, which are centered on .row-column
+   itself (see further down) rather than on .row directly. */
+.row > img {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  object-fit: contain;
+  object-position: center;
+  display: block;
+}
+
+/* Fullscreen's layout: a vertical column reusing the outer page's own
+   row-stacking shape (see getCenters/getOffsets in sketch.js) one level
+   down, on the row's own image pool instead of the 5 rows — not a flex
+   container, each image is absolutely positioned by sketch.js's
+   applyColumnLayout() via its own transform, same pattern as .row > img
+   above. Hidden until its row is .is-fullscreen (toggled in sketch.js's
+   update()), at which point it covers the (also hidden then) stack images
+   above.
+
+   height: 100vh + position: absolute + top: 50% + translateY(-50%) (same
+   centering as .row itself) keeps this always centered on the same point
+   .row grows from, so .row's overflow: hidden clipping it down to .row's
+   current (smaller, animating) height reads as a symmetric reveal from the
+   center outward, not a lopsided one. */
+.row-column {
+  display: none;
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  height: 100vh;
+  width: 100%;
+}
+
+.row.is-fullscreen > img {
+  display: none;
+}
+
+.row.is-fullscreen .row-column {
+  display: block;
+}
+
+/* Base position only — width, height, and transform (translate, to offset
+   from this centered base point) are all set inline per image by
+   sketch.js's applyColumnLayout() whenever the column's scroll position
+   changes; no transition here, the position tracks wheel input 1:1. */
+.row-column img {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  object-fit: contain;
+  object-position: center;
+  display: block;
+}
