@@ -142,6 +142,28 @@ const FULLSCREEN_TRANSITION_MS = 400;
 // so e.g. PAUSE_WEIGHT = RAMP_WEIGHT means "pause as long as the transition".
 const PAUSE_WEIGHT = 0.3;
 const RAMP_WEIGHT = 0.5;
+// The intro is one extra ramp segment prepended to the timeline, from a
+// virtual activePosition of -1 (page freshly opened: logo blown up to the
+// full viewport width, row 0 fully collapsed and parked at the bottom of
+// the screen, every other row below the fold) to 0 (row 0 fully active —
+// the state the page used to open in). Weighted like a slightly longer
+// RAMP_WEIGHT since it carries more visual change than a row handover does.
+// .stack-wrapper's height in style.css was grown by this segment's share of
+// the timeline so the existing rows' scroll pacing is unchanged.
+const INTRO_WEIGHT = 0.6;
+// Gap between the collapsed row's bottom edge and the bottom of the
+// viewport at the very start of the intro; INTRO_ROW_SHIFT_VH turns that
+// into how far the whole row stack is pushed down from its normal
+// viewport-centered position there (its center, not its edge, is what
+// getOffsets works in).
+const INTRO_ROW_BOTTOM_VH = 2;
+const INTRO_ROW_SHIFT_VH = 50 - INTRO_ROW_BOTTOM_VH - MIN_VH / 2;
+// Where in the intro the row titles start fading in. The nav itself is at
+// rest and fully visible from the opening frame — only the per-row category
+// labels hold back, since at the start there's just the one collapsed row
+// and its label would sit alone at the bottom of an otherwise empty screen.
+const INTRO_TITLE_FADE_START = 0.55;
+
 // One full pause-then-ramp cycle, i.e. the scroll "distance" (in the same
 // weight units as PAUSE_WEIGHT/RAMP_WEIGHT) it takes the fullscreen column
 // to move from one image fully centered to the next — see
@@ -156,6 +178,8 @@ const FULLSCREEN_COLUMN_PX_PER_STEP = 700;
 const stackWrapper = document.getElementById("stackWrapper");
 const stickyViewport = document.getElementById("stickyViewport");
 const topNav = document.getElementById("topNav");
+const navCenter = topNav.querySelector(".nav-center");
+const navLogo = document.getElementById("navLogo");
 const bottomFooter = document.getElementById("bottomFooter");
 const fullscreenTitle = document.getElementById("fullscreenTitle");
 const fullscreenTitleType = document.getElementById("fullscreenTitleType");
@@ -508,11 +532,22 @@ for (let rowIndex = 0; rowIndex < ROW_COUNT; rowIndex += 1) {
   rows.push(row);
 }
 
-// Builds an alternating [pause at 0, ramp 0->1, pause at 1, ramp 1->2, ...]
-// timeline and walks a linear 0..1 scroll progress through it, so scrolling
-// holds each row at full size for a stretch before continuing to the next.
+// Builds an alternating [intro ramp -1->0, pause at 0, ramp 0->1, pause at
+// 1, ...] timeline and walks a linear 0..1 scroll progress through it, so
+// scrolling holds each row at full size for a stretch before continuing to
+// the next.
+//
+// The leading intro segment means activePosition starts at -1 rather than 0
+// — "one step before row 0 is active", which every downstream consumer
+// already handles without a special case: getDistances clamps |0 - (-1)| to
+// a distance of 1, so row 0 is collapsed to MIN_VH exactly like any other
+// inactive row, and getOffsets clamps its floor/ceil lookups into range, so
+// the stack stays centered on row 0 (update() then pushes it down to the
+// bottom of the screen by INTRO_ROW_SHIFT_VH). Scrolling out of the intro is
+// therefore the same continuous "row grows as it becomes active" motion that
+// every later row transition already is.
 function getActivePosition(rawProgress) {
-  const segments = [];
+  const segments = [{ weight: INTRO_WEIGHT, from: -1, to: 0 }];
   for (let i = 0; i < ROW_COUNT; i += 1) {
     segments.push({ weight: PAUSE_WEIGHT, from: i, to: i });
     if (i < ROW_COUNT - 1) {
@@ -576,6 +611,73 @@ function getOffsets(heights, activePosition, gapVh) {
   const focusCenter = lerp(centers[floorIndex], centers[ceilIndex], frac);
 
   return centers.map((center) => center - focusCenter);
+}
+
+// The logo's geometry in its normal, untransformed resting state — where
+// its left edge sits and how wide it actually draws. Both are read once per
+// layout change rather than per frame, since updateIntroLogo needs the
+// *untransformed* box and reading it while its own transform is applied
+// would feed its previous output back into its next input.
+//
+// contentWidth deliberately subtracts .nav-logo's padding-right: the SVG
+// element is 35vw wide but 9vw of that is empty padding, and it's the drawn
+// 26vw that has to reach the far edge of the screen at full scale, not the
+// padded box.
+let navLogoMetrics = null;
+
+function measureNavLogo() {
+  navCenter.style.transform = "none";
+
+  const logoRect = navLogo.getBoundingClientRect();
+  const paddingRightPx = parseFloat(getComputedStyle(navLogo).paddingRight) || 0;
+  // .top-nav's own horizontal padding is the inset the full-width logo lines
+  // up to, so it sits flush with everything else in the nav rather than
+  // bleeding to the raw viewport edge.
+  const navInsetPx = parseFloat(getComputedStyle(topNav).paddingLeft) || 0;
+
+  navLogoMetrics = {
+    left: logoRect.left,
+    contentWidth: logoRect.width - paddingRightPx,
+    navInsetPx,
+  };
+
+  navCenter.style.transform = "";
+}
+
+// Scales the logo from full viewport width down to its normal nav size over
+// the intro, in lockstep with the row stack's own intro motion (same
+// introProgress drives both) — a transform on .nav-center rather than an
+// animated width, so the nav's flex layout never reflows and, more
+// importantly, so the end of the intro is the exact identity transform: the
+// logo lands back on its real resting position rather than on a separately
+// computed guess at it, and there's nothing to jump.
+//
+// transform-origin is left top (style.css), so scaling holds the logo's
+// top-left corner at navLogoMetrics.left; the translate then carries that
+// same corner out to the nav's left inset. Applied in that order —
+// translate written first, so it composes after the scale — the corner ends
+// up exactly at navInsetPx regardless of scale.
+function updateIntroLogo(introProgress) {
+  if (!navLogoMetrics || navLogoMetrics.contentWidth <= 0) return;
+
+  const fullWidthPx = window.innerWidth - navLogoMetrics.navInsetPx * 2;
+  const scale = lerp(fullWidthPx / navLogoMetrics.contentWidth, 1, introProgress);
+  const shiftPx = lerp(navLogoMetrics.navInsetPx - navLogoMetrics.left, 0, introProgress);
+
+  navCenter.style.transform = `translateX(${shiftPx}px) scale(${scale})`;
+}
+
+// Fades the row titles in over the back half of the intro (see
+// INTRO_TITLE_FADE_START) via a custom property style.css reads, rather than
+// writing opacity onto each title individually — .row-title's own
+// .nav-hidden fullscreen fade then still wins on specificity instead of
+// fighting an inline style. The body class only exists to drop .row-title's
+// opacity transition while this is being driven per scroll frame, and to
+// stop the blown-up logo swallowing pointer events (see style.css).
+function updateIntroUi(introProgress) {
+  const opacity = clamp((introProgress - INTRO_TITLE_FADE_START) / (1 - INTRO_TITLE_FADE_START), 0, 1);
+  document.documentElement.style.setProperty("--intro-title-opacity", `${opacity}`);
+  document.body.classList.toggle("is-intro", introProgress < 1);
 }
 
 // Slides the whole top nav up out of view in exact lockstep with row 0's
@@ -677,11 +779,32 @@ function update() {
   const activePosition = getActivePosition(progress);
   const gapVh = getRowGapVh();
 
+  // 0 at the very top of the page (the opening frame), 1 from the moment row
+  // 0 is fully active onwards — i.e. how far through the leading intro
+  // segment of getActivePosition's timeline the scroll is.
+  const introProgress = clamp(activePosition + 1, 0, 1);
+
   const distances = getDistances(activePosition);
   const heights = getHeights(distances);
-  const offsets = getOffsets(heights, activePosition, gapVh);
+  // Pushes the whole stack down so the one visible row sits at the bottom of
+  // the screen at the start of the intro, easing back to the normal
+  // viewport-centered stack by the end of it. Applied to the offsets rather
+  // than to .sticky-viewport as a whole so the row titles, which are
+  // positioned from these same offsets, come along with it.
+  const introShiftVh = (1 - introProgress) * INTRO_ROW_SHIFT_VH;
+  const offsets = getOffsets(heights, activePosition, gapVh).map((offset) => offset + introShiftVh);
 
-  updateTopNav(distances[0]);
+  updateIntroLogo(introProgress);
+  updateIntroUi(introProgress);
+
+  // distances[0] is 1 at both ends of row 0's life — collapsed below the
+  // logo during the intro, and collapsed again once row 1 takes over — but
+  // the nav should only slide away for the second of those; during the intro
+  // the logo *is* the nav, and it has to stay put. Clamping activePosition
+  // to 0..1 gives exactly that: flat 0 (nav at rest) across the whole intro,
+  // then row 0's own collapse distance from there on, continuous at the
+  // handover point since both are 0 there.
+  updateTopNav(clamp(activePosition, 0, 1));
   updateBottomFooter(distances[ROW_COUNT - 1]);
   updateRowTitles(heights, offsets, distances);
   // Fullscreen covers the whole viewport with one image at a time, so the
@@ -745,6 +868,20 @@ function onScroll() {
   });
 }
 
+// The logo's resting geometry only changes when layout does, so it's
+// remeasured on resize (and again once webfonts land, since .nav-left's
+// width — and so where the logo sits — depends on them) rather than per
+// scroll frame.
+function remeasureAndUpdate() {
+  measureNavLogo();
+  update();
+}
+
 window.addEventListener("scroll", onScroll, { passive: true });
-window.addEventListener("resize", update);
-update();
+window.addEventListener("resize", remeasureAndUpdate);
+window.addEventListener("load", remeasureAndUpdate);
+if (document.fonts && document.fonts.ready) {
+  document.fonts.ready.then(remeasureAndUpdate);
+}
+
+remeasureAndUpdate();

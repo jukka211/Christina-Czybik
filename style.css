@@ -60,6 +60,32 @@ body {
   margin-left: auto;
 }
 
+
+/* Scaled up to full width during the intro by updateIntroLogo() in
+   sketch.js — a transform rather than an interpolated width so the nav's
+   own flex layout (which sizes .nav-center from the logo) never changes,
+   and so the logo lands back on exactly its normal resting position at the
+   end of the intro instead of on a separately-computed approximation of it.
+   transform-origin pins the scale to the logo's own top-left corner, the
+   one point updateIntroLogo then translates to the viewport's left inset. */
+/* Deliberately no will-change: transform here, unlike every other
+   scroll-driven transform in this file. It would promote the logo to a
+   compositing layer rasterized once at its unscaled ~423px width, and the
+   intro then blows that raster up by ~7.5x — the full-width logo came out
+   visibly fuzzy. Without it the SVG is re-rasterized at its real on-screen
+   size each frame, which for 5 shapes is cheap and stays crisp. */
+.nav-center {
+  transform-origin: left top;
+}
+
+/* While blown up, the logo covers a large part of the screen — nothing in
+   it is meant to be interactive there (its hover animation is handed over
+   to the scroll driver for the same stretch, see logo-animation.js), so it
+   shouldn't be swallowing pointer events over that whole area either. */
+body.is-intro .nav-center {
+  pointer-events: none;
+}
+
 .top-nav a {
   color: inherit;
   text-decoration: none;
@@ -67,11 +93,21 @@ body {
 .top-nav a:hover {
   text-decoration: underline;
 }
+/* christina-czybik-logo.svg, inlined. Its viewBox is 350.99 x 100.24 — the
+   wordmark's own tight box — where the previous logo's was 643.49 wide, most
+   of that empty room for a per-letter spread animation that this asset has
+   no separate letters for. So the widths here are not the old 35vw/9vw:
+   they're re-solved for the same two things those were doing, at 1920px.
+   Content box (width minus padding-right) = 13.13vw, which renders the
+   glyphs at exactly the size the old logo did at rest; padding-right then
+   sits the visible wordmark's center on the viewport's, which is what the
+   old 9vw was for — .nav-center is placed by the flex auto-margins either
+   side of it, so the padding is the only lever on where the ink lands. */
 .nav-logo {
-  width: 35vw;
+  width: 22.04vw;
   height: auto;
   display: block;
-  padding-right: 9vw;
+  padding-right: 8.91vw;
   fill: currentColor;
 }
 
@@ -125,10 +161,14 @@ body {
 .contact-container p:hover{
   text-decoration: underline;
 }
-/* Tall scroll spacer — its length is how far you scroll to move through all rows */
+/* Tall scroll spacer — its length is how far you scroll to move through all
+   rows. 980vh rather than the original 850vh because getActivePosition now
+   starts one INTRO_WEIGHT segment earlier (see sketch.js): the extra height
+   is that segment's share of the timeline, so adding the intro lengthens the
+   page instead of speeding every existing row transition up to fit. */
 .stack-wrapper {
   position: relative;
-  height: 850vh;
+  height: 980vh;
 }
 
 .sticky-viewport {
@@ -192,8 +232,25 @@ body {
   font-size: 13px;
   letter-spacing: 0.25em;
   pointer-events: none;
+  opacity: var(--intro-title-opacity, 1);
   transition: opacity 0.4s ease;
   will-change: transform;
+}
+
+/* Beats the plain .row-title opacity above (two classes vs. one) so
+   fullscreen still hides the titles outright regardless of where the intro
+   fade currently sits. */
+.row-title.nav-hidden {
+  opacity: 0;
+}
+
+/* The intro drives --intro-title-opacity per scroll frame, and a 0.4s ease on
+   a value that changes every frame only lags the scroll — same reasoning as
+   the transition-free nav/row transforms elsewhere in this file. The
+   transition is left in place outside the intro, where it's the fullscreen
+   fade's own easing. */
+body.is-intro .row-title {
+  transition: none;
 }
 
 /* The small layout (Figma 17:124): only the bare category name, centered in
