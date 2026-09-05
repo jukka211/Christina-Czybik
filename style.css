@@ -93,21 +93,22 @@ body.is-intro .nav-center {
 .top-nav a:hover {
   text-decoration: underline;
 }
-/* christina-czybik-logo.svg, inlined. Its viewBox is 350.99 x 100.24 — the
-   wordmark's own tight box — where the previous logo's was 643.49 wide, most
-   of that empty room for a per-letter spread animation that this asset has
-   no separate letters for. So the widths here are not the old 35vw/9vw:
-   they're re-solved for the same two things those were doing, at 1920px.
-   Content box (width minus padding-right) = 13.13vw, which renders the
-   glyphs at exactly the size the old logo did at rest; padding-right then
-   sits the visible wordmark's center on the viewport's, which is what the
-   old 9vw was for — .nav-center is placed by the flex auto-margins either
-   side of it, so the padding is the only lever on where the ink lands. */
+/* christina-czybik-logo.svg, inlined. Its viewBox is 340.5 x 100.2 — the
+   wordmark's own tight box, not the old animated logo's 643.49-wide one with
+   room built in for a per-letter spread this asset has no separate letters
+   for. Width/padding-right are re-solved (at the 1920px reference) for what
+   they've always been doing: width minus padding-right renders the glyphs
+   at the same size the previous swap did (~64.8px ink height), and
+   padding-right pulls the visible wordmark's own center back to the
+   viewport's — .nav-center is centered by the flex auto-margins on
+   .nav-left/.nav-right as a *box*, and that box is wider on the right than
+   the ink is, so without this the ink itself would sit visibly left of
+   center. */
 .nav-logo {
-  width: 22.04vw;
+  width: 21.79vw;
   height: auto;
   display: block;
-  padding-right: 8.91vw;
+  padding-right: 9.05vw;
   fill: currentColor;
 }
 
