@@ -49,6 +49,7 @@ const INTRO_GRID_WILL_RUN =
 // fullscreen-transition in style.css.
 
 const IMAGE_FILES = [
+  "20260714_CS_CC_BMFTR_DLR_212.JPG",
   "20230613_CZY_Steinmeier_Ortszeit060 1.jpg",
   "20230329_CZY_Bundestag038.JPG",
   "2023-08-31_CZY_Features009.JPG",
@@ -102,7 +103,6 @@ const IMAGE_FILES = [
   "20260616_CC_BKM_Gedaechtniskirche_057.JPG",
   "20260713_CS_CC_BMFTR_DLR_112.JPG",
   "20260713_CS_CC_BMFTR_DLR_128.JPG",
-  "20260714_CS_CC_BMFTR_DLR_212.JPG",
   "20260714_CS_CC_BMFTR_DLR_330.JPG",
   "20260714_CS_CC_BMFTR_DLR_351.JPG",
   "220517_bundesfoto_CZY_HabeckThueringen252.JPG",
