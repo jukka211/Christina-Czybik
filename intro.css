@@ -1,0 +1,73 @@
+/* Opening photo grid (intro-grid.js), Figma 39:2 / 39:141 / 39:282.
+   Photos in 100 x 150 boxes at the 1920px reference, spread edge to edge
+   across the screen from just under the buttons (41px) to 14px above the
+   bottom, over the full-width logo. The boxes shrink on screens too short
+   for four rows of them. object-fit: contain lets landscape photos sit in
+   the middle of their box, as in the design. */
+.intro-grid {
+  --intro-cell-h: min(7.81vw, calc((100vh - 55px) / var(--intro-rows) - 10px));
+  --intro-cell-w: calc(var(--intro-cell-h) * 2 / 3);
+  position: fixed;
+  top: 41px;
+  right: 18px;
+  bottom: 14px;
+  left: 19px;
+  z-index: 105;
+  display: grid;
+  grid-template-columns: repeat(var(--intro-cols), var(--intro-cell-w));
+  grid-template-rows: repeat(var(--intro-rows), var(--intro-cell-h));
+  justify-content: space-between;
+  align-content: space-between;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.intro-grid.is-visible {
+  opacity: 1;
+}
+
+/* Skipped or finished: whatever is still showing fades out together. */
+.intro-grid.is-done {
+  opacity: 0;
+}
+
+.intro-grid-cell {
+  transition: opacity 0.2s ease;
+}
+
+.intro-grid-cell.is-gone {
+  opacity: 0;
+}
+
+.intro-grid-cell img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  opacity: 0;
+}
+
+.intro-grid-cell img.is-loaded {
+  opacity: 1;
+}
+
+/* The gallery waits behind the opening and fades in once it's over. */
+.sticky-viewport {
+  transition: opacity 0.6s ease;
+}
+
+body.is-intro-grid .sticky-viewport {
+  opacity: 0;
+}
+
+/* On a phone the boxes are sized by the width: three small columns across,
+   leaving the logo readable between them. */
+@media (max-width: 768px) {
+  .intro-grid {
+    --intro-cell-w: min(13.6vw, calc(((100vh - 55px) / var(--intro-rows) - 10px) * 2 / 3 * 0.85));
+    --intro-cell-h: calc(var(--intro-cell-w) * 3 / 2);
+    right: 10px;
+    left: 10px;
+  }
+}

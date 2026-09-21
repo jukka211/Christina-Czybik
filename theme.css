@@ -1,0 +1,33 @@
+/* Site-wide colors — shared across index.html, about-page.html, and
+   index-page/index.html (linked before each page's own stylesheet). --bg/--fg
+   are the only two variables the rest of the site's CSS needs to reference,
+   so anything using a literal #fff/#000 instead (e.g. an element that needs
+   an opaque background over scrolling content) won't follow them — see
+   #bottomFooter and .top-nav in the per-page stylesheets, which use these
+   variables for exactly that reason.
+
+   These were a switchable pair until the b/w mode switch was removed: a
+   `body.theme-black { --bg: #000; --fg: #fff; }` rule, flipped by a control
+   in the corner of every page. Redefining the two below is still all it
+   would take to invert the whole site. */
+:root {
+  --bg: #fff;
+  --fg: #000;
+}
+
+html,
+body {
+  background: var(--bg);
+  color: var(--fg);
+}
+
+/* The top nav's current-page/current-mode pairs (Overview / Index,
+   Kategorie / Projekte): the non-selected half is dimmed rather than hidden,
+   so both stay visible and clickable at once — the same "which one is active"
+   convention as the column slider's two endpoint labels elsewhere in this
+   project. The phone layout drops one half of each pair outright and undims
+   what's left, since a lone dimmed link has nothing to read as dim against
+   (see style.css). */
+.is-inactive {
+  opacity: 0.35;
+}

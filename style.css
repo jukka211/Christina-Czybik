@@ -1,0 +1,701 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+}
+
+/* transform is set every scroll frame by updateTopNav() in sketch.js — no
+   transition on it (see that function for why: it already runs in lockstep
+   with the row stack's own per-frame, transition-free movement, so easing
+   here would only put it out of sync again). opacity is the one property
+   that still transitions, for the separate fullscreen fade below. */
+.top-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+  display: flex;
+  align-items: top;
+  padding: 0.875rem 1.25rem;
+  font-family: "IBM Plex Mono", monospace;
+  font-weight: 400;
+  font-size: 12.5px;
+  letter-spacing: 0.25em;
+  transition: opacity 0.4s ease;
+  will-change: transform;
+}
+
+/* Toggled in sketch.js's update() for as long as any row is fullscreen —
+   opacity + pointer-events, not display: none, so it fades rather than
+   snapping and doesn't disturb layout underneath. Shared by the top nav and
+   the bottom footer (#bottomFooter below), which both hide the same way
+   while fullscreen covers the viewport. */
+.nav-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.nav-block {
+  display: flex;
+  align-items: top;
+  gap: 0.75rem;
+}
+
+/* Figma spec: 163px gap between "About" and "Overview / Index" at the
+   1920px reference frame (163/1920 = 8.49vw) — much wider than a normal
+   nav-link gap, so it needs its own override rather than the shared
+   .nav-block gap above. */
+.nav-left {
+  margin-right: auto;
+  gap: 8.49vw;
+}
+
+.nav-right {
+  margin-left: auto;
+}
+
+
+/* Scaled up to full width during the intro by updateIntroLogo() in
+   sketch.js — a transform rather than an interpolated width so the nav's
+   own flex layout (which sizes .nav-center from the logo) never changes,
+   and so the logo lands back on exactly its normal resting position at the
+   end of the intro instead of on a separately-computed approximation of it.
+   transform-origin pins the scale to the logo's own top-left corner, the
+   one point updateIntroLogo then translates to the viewport's left inset. */
+/* Deliberately no will-change: transform here, unlike every other
+   scroll-driven transform in this file. It would promote the logo to a
+   compositing layer rasterized once at its unscaled ~423px width, and the
+   intro then blows that raster up by ~7.5x — the full-width logo came out
+   visibly fuzzy. Without it the SVG is re-rasterized at its real on-screen
+   size each frame, which for 5 shapes is cheap and stays crisp. */
+.nav-center {
+  transform-origin: left top;
+}
+
+/* While blown up, the logo covers a large part of the screen — nothing in
+   it is meant to be interactive there (its hover animation is handed over
+   to the scroll driver for the same stretch, see logo-animation.js), so it
+   shouldn't be swallowing pointer events over that whole area either. */
+body.is-intro .nav-center {
+  pointer-events: none;
+}
+
+.top-nav a {
+  color: inherit;
+  text-decoration: none;
+}
+.top-nav a:hover {
+  text-decoration: underline;
+}
+/* christina-czybik-logo.svg, inlined. Its viewBox is 340.5 x 100.2 — the
+   wordmark's own tight box, not the old animated logo's 643.49-wide one with
+   room built in for a per-letter spread this asset has no separate letters
+   for. Width/padding-right are re-solved (at the 1920px reference) for what
+   they've always been doing: width minus padding-right renders the glyphs
+   at the same size the previous swap did (~64.8px ink height), and
+   padding-right pulls the visible wordmark's own center back to the
+   viewport's — .nav-center is centered by the flex auto-margins on
+   .nav-left/.nav-right as a *box*, and that box is wider on the right than
+   the ink is, so without this the ink itself would sit visibly left of
+   center. */
+.nav-logo {
+  width: 21.79vw;
+  height: auto;
+  display: block;
+  padding-right: 9.05vw;
+  fill: currentColor;
+}
+
+#bottomLogo {
+  padding-left: 0vw;
+  width: 16vw;
+}
+
+.bottom-logo-wrap {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  padding: 0.6rem 0.9rem;
+  pointer-events: none;
+}
+
+/* Mirrors .top-nav's own slide (see updateTopNav in sketch.js): fixed to
+   the bottom instead of the top, pushed down out of view instead of up.
+   sketch.js's updateBottomFooter drives this off the *last* row's collapse
+   distance instead of row 0's, with a positive translateY instead of
+   negative — same lockstep-with-the-row-stack logic as the top nav, just
+   reversed, so the footer slides up into view as the stack reaches its
+   final row instead of sliding away as it leaves the first.
+
+   Content per Figma 48:2: two 305px columns (Info, Kontakt) centered as a
+   pair, so the Kontakt column starts at the middle of the screen, with
+   gray labels 7px above their text, the same 13px uppercase type as the
+   panels. "Legal, ©2026" sits in the bottom-right corner, level with the
+   last line. */
+#bottomFooter {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  z-index: 100;
+  padding: 24px 11px 13px;
+  background: var(--bg);
+  font-family: "IBM Plex Mono", monospace;
+  font-weight: 400;
+  font-size: 13px;
+  letter-spacing: 0;
+  line-height: 14.3px;
+  color: var(--fg);
+  transition: opacity 0.4s ease;
+  will-change: transform;
+}
+
+.footer-contact {
+  display: grid;
+  grid-template-columns: 305px 305px;
+  justify-content: center;
+}
+
+.footer-col {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  text-transform: uppercase;
+}
+
+.footer-label {
+  margin: 0;
+  font: inherit;
+  color: #c0c0c0;
+}
+
+.footer-col p,
+.footer-legal {
+  margin: 0;
+}
+
+.site-footer a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.site-footer a:hover {
+  text-decoration: underline;
+}
+
+.footer-legal {
+  position: absolute;
+  right: 11px;
+  bottom: 13px;
+}
+/* Tall scroll spacer — its length is how far you scroll to move through all
+   rows. 980vh rather than the original 850vh because getActivePosition now
+   starts one INTRO_WEIGHT segment earlier (see sketch.js): the extra height
+   is that segment's share of the timeline, so adding the intro lengthens the
+   page instead of speeding every existing row transition up to fit. */
+.stack-wrapper {
+  position: relative;
+  height: 980vh;
+}
+
+.sticky-viewport {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* Not a flex container — sketch.js positions every image itself (a ported
+   copy of the cumulative-offset stacking in HomePageClient.tsx), each one
+   absolutely placed via its own transform. .row is just this stack's
+   viewport: overflow: hidden clips whatever's mounted but currently sits
+   outside the row's own bounds. cursor: pointer here is just the pre-JS
+   fallback — sketch.js swaps it per zone on mousemove (w-resize/e-resize
+   over the left/right step zones, zoom-in/zoom-out over the center
+   fullscreen zone). */
+.row {
+  position: absolute;
+  top: calc(50% + var(--stack-shift, 0px));
+  left: var(--stack-side, 0px);
+  width: calc(100% - 2 * var(--stack-side, 0px));
+  overflow: hidden;
+  transform-origin: center;
+  cursor: pointer;
+  will-change: transform, height;
+}
+
+/* Static label above each row's image content — category + image count,
+   both hardcoded text (see ROW_TITLES in sketch.js), not computed from the
+   row's real activeIndex/pool. A sibling of .row rather than a child of it
+   (both direct children of .sticky-viewport, same positioned ancestor, same
+   top: 50% reference line .row itself uses) — living inside .row would mean
+   sitting inside its overflow: hidden clip, pinned to its top edge and so
+   overlaying the image underneath; as its own element it's free to sit in
+   the gap above the row instead. sketch.js's updateRowTitles repositions it
+   every scroll frame from the row's own real top edge, same
+   lockstep-with-the-row-stack reasoning as updateTopNav/updateBottomFooter.
+
+   Only the large (active) row shows its title (see .row-title.is-small
+   below). pointer-events: none so it never intercepts clicks meant for the
+   row underneath.
+
+   Two pairs, set like the Info / Index buttons above them: same type, same
+   inset, and the same 204px width, "Kat.:" + category under "Info +" on the
+   left, "Ort" + count under "Index +" on the right. */
+.row-title {
+  position: absolute;
+  top: calc(50% + var(--stack-shift, 0px));
+  left: 0;
+  width: 100%;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 16px 0 15px;
+  font-family: "IBM Plex Mono", monospace;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 14.3px;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: var(--intro-title-opacity, 1);
+  transition: opacity 0.4s ease;
+  will-change: transform;
+}
+
+/* Beats the plain .row-title opacity above (two classes vs. one) so
+   fullscreen still hides the titles outright regardless of where the intro
+   fade currently sits. */
+.row-title.nav-hidden {
+  opacity: 0;
+}
+
+/* The intro drives --intro-title-opacity per scroll frame, and a 0.4s ease on
+   a value that changes every frame only lags the scroll — same reasoning as
+   the transition-free nav/row transforms elsewhere in this file. The
+   transition is left in place outside the intro, where it's the fullscreen
+   fade's own easing. */
+body.is-intro .row-title {
+  transition: none;
+}
+
+/* Only the large (active) row has a title. A row collapsing past the
+   halfway point toward its neighbor (sketch.js's updateRowTitles toggles
+   .is-small) fades its title out while the growing row's fades in. Two
+   classes, like .row-title.nav-hidden above, to beat the plain .row-title
+   opacity. */
+.row-title.is-small {
+  opacity: 0;
+}
+
+.row-title-pair {
+  width: 204px;
+  display: flex;
+  justify-content: space-between;
+}
+
+/* A hidden small title mustn't keep catching taps on "Mehr". */
+.row-title.is-small .row-title-more {
+  pointer-events: none;
+}
+
+/* Mobile's stand-in for the count (shown only inside the phone media query
+   below): a plain-text button that opens this row's fullscreen. Styled to
+   read as the same 13px spaced mono as the rest of the title, with its tap
+   area grown by padding and pulled back by an equal negative margin, so the
+   finger gets a bigger target without the title's own measured height
+   (which sketch.js's refreshMetrics reads) changing. pointer-events: auto
+   because .row-title itself is click-through. */
+.row-title-more {
+  display: none;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 12px;
+  margin: -12px;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+/* The title fades out rather than disappearing, and sits above the rows
+   (z-index 2) — so while it's hidden by fullscreen or parked off screen, an
+   invisible "Mehr" would otherwise still catch taps meant for the image
+   underneath. */
+.row-title.nav-hidden .row-title-more,
+.row-title.is-offscreen .row-title-more {
+  pointer-events: none;
+}
+
+/* Fullscreen mode's own title bar (Figma node 14:75) — a different layout
+   from .row-title above: full width edge-to-edge (same 20px/1.25rem inset
+   as the top-nav) with justify-content: space-between, rather than a
+   hug-width block centered in the middle. "Kat." and the category name sit
+   close together (8px gap) as one compact label on the left; the count
+   sits flush right. Vertically centered on the viewport (top: 50% +
+   translateY(-50%), same centering trick .row-title and .row > img use).
+
+   Always in the layout (display: flex, not display: none) so its opacity
+   transition actually has something to animate — hidden by default via
+   opacity: 0 and only faded in via .is-visible, which sketch.js's update()
+   toggles alongside fullscreenRowIndex, the opposite direction from
+   .nav-hidden elsewhere (those fade OUT during fullscreen; this fades IN). */
+.fullscreen-title {
+  position: fixed;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  transform: translateY(-50%);
+  z-index: 50;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2px 1.25rem;
+  font-family: "IBM Plex Mono", monospace;
+  font-weight: 400;
+  font-size: 13px;
+  letter-spacing: 0.25em;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.fullscreen-title.is-visible {
+  opacity: 1;
+}
+
+.fullscreen-title-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Adds a transition just for entering/exiting fullscreen — sketch.js toggles
+   this class on for FULLSCREEN_TRANSITION_MS around that one change and
+   removes it again afterward, so regular scroll-driven row movement (which
+   doesn't carry this class) stays instant as before; only the fullscreen
+   jump itself animates. */
+.row.fullscreen-transition {
+  transition: height 0.4s ease, transform 0.4s ease, opacity 0.4s ease;
+}
+
+.row.fullscreen-transition > img {
+  transition: width 0.4s ease, height 0.4s ease, transform 0.4s ease;
+}
+
+/* The one other moment worth animating, on the same borrowed-for-a-beat
+   pattern as .fullscreen-transition above: the snap at the end of a mobile
+   swipe, where the dragged row either carries on to the next image or falls
+   back to the one it started on. sketch.js adds this class only for
+   SWIPE_SETTLE_MS on release, so the drag itself still tracks the finger with
+   no easing lagging behind it. transform only — nothing resizes here, unlike
+   the fullscreen jump. */
+.row.swipe-settle {
+  transition: height 0.25s ease, transform 0.25s ease;
+}
+
+.row.swipe-settle > img {
+  transition: width 0.25s ease, height 0.25s ease, transform 0.25s ease;
+}
+
+/* The titles are positioned off the rows' own edges, so they have to settle
+   with them. opacity is repeated from .row-title's own rule because naming
+   transition here replaces it outright. */
+.row-title.swipe-settle {
+  transition: transform 0.25s ease, opacity 0.4s ease;
+}
+
+/* A row parked entirely off screen has nothing on screen left to label, but
+   its title sits above its own top edge and so can still show from below the
+   bottom of the viewport. Mobile packs the rows tightly enough for that to
+   land right under the third image — see updateRowTitles, which only applies
+   this there. Two classes, like .row-title.nav-hidden above, to beat the
+   plain .row-title opacity. */
+.row-title.is-offscreen {
+  opacity: 0;
+}
+
+/* Base position only — width, height, and transform (translate, to offset
+   from this centered base point) are all set inline per image by
+   sketch.js whenever activeIndex changes; no transition here by default,
+   switching is an instant snap (see .fullscreen-transition above for the
+   one exception). object-fit: contain fits each image inside its box
+   without cropping, and object-position centers it within any resulting
+   empty space. > (direct children only) so none of this leaks into
+   .row-column's own nested images below, which are centered on .row-column
+   itself (see further down) rather than on .row directly. */
+.row > img {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  object-fit: contain;
+  object-position: center;
+  display: block;
+}
+
+/* Fullscreen's layout: a vertical column reusing the outer page's own
+   row-stacking shape (see getCenters/getOffsets in sketch.js) one level
+   down, on the row's own image pool instead of the 5 rows — not a flex
+   container, each image is absolutely positioned by sketch.js's
+   applyColumnLayout() via its own transform, same pattern as .row > img
+   above. Hidden until its row is .is-fullscreen (toggled in sketch.js's
+   update()), at which point it covers the (also hidden then) stack images
+   above.
+
+   height: 100vh + position: absolute + top: 50% + translateY(-50%) (same
+   centering as .row itself) keeps this always centered on the same point
+   .row grows from, so .row's overflow: hidden clipping it down to .row's
+   current (smaller, animating) height reads as a symmetric reveal from the
+   center outward, not a lopsided one. */
+.row-column {
+  display: none;
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  height: 100vh;
+  width: 100%;
+}
+
+/* Fullscreen covers the whole screen, so it ignores the stack's side
+   insets (--stack-side, set by sketch.js). */
+.row.is-fullscreen {
+  left: 0;
+  width: 100%;
+}
+
+.row.is-fullscreen > img {
+  display: none;
+}
+
+.row.is-fullscreen .row-column {
+  display: block;
+}
+
+/* Base position only — width, height, and transform (translate, to offset
+   from this centered base point) are all set inline per image by
+   sketch.js's applyColumnLayout() whenever the column's scroll position
+   changes; no transition here, the position tracks wheel input 1:1. */
+.row-column img {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  object-fit: contain;
+  object-position: center;
+  display: block;
+}
+
+/* --- Phone layout ----------------------------------------------------------
+   This query and MOBILE_QUERY in sketch.js have to stay identical: matchMedia
+   there is what decides whether the stack runs its desktop or its mobile
+   geometry, and the two disagreeing at the boundary would mean CSS set up for
+   touch on a layout still sized for clicking, or the reverse.
+
+   The sizes themselves are all computed in sketch.js (refreshMetrics and
+   getRowGapVh) rather than declared here, because they're derived from the
+   viewport's own width and feed the same stacking math the desktop layout
+   uses. The screen shows exactly three images — one small above, one large
+   across the full width, one small below. Vertical scroll moves between them
+   the way it always did; a horizontal swipe on the large one moves along that
+   row's own images. What's left for CSS is the part only CSS can say: which
+   gestures the browser is allowed to keep for itself. */
+@media (max-width: 768px) {
+  /* pan-y hands vertical drags straight to the page's own scrolling while
+     reserving horizontal ones for the swipe handler in sketch.js — which is
+     exactly what lets that handler preventDefault a swipe without wrestling
+     the browser for a scroll it had already started. pinch-zoom is kept
+     explicitly: this is a photography site, and pan-y alone would silently
+     take zooming away. */
+  .row {
+    touch-action: pan-y pinch-zoom;
+  }
+
+  /* Fullscreen's column needs the vertical axis too — a drag there moves
+     between images rather than scrolling the page parked underneath it — so
+     single-finger panning is off entirely here and only pinch survives. */
+  .row-column {
+    touch-action: pinch-zoom;
+  }
+
+  /* "Mehr" takes the count's place in the title. */
+  .row-title-count {
+    display: none;
+  }
+
+  /* Styled like the Info / Index tabs (see .panel-toggle in panels.css):
+     gray fill, dark gray text in normal case, same padding. The tab itself
+     is small, so an invisible ::after extends what a finger can hit by
+     10px all round. */
+  .row-title-more {
+    display: inline-block;
+    position: relative;
+    margin: 0;
+    padding: 3px 4px 4px;
+    border: 0;
+    background: #f0f0f0;
+    color: #3b3b3b;
+    line-height: 16.9px;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+
+  .row-title-more::after {
+    content: "";
+    position: absolute;
+    inset: -10px;
+  }
+
+  /* No room for two 204px pairs on a phone: "Kat.:" + category on the
+     left and "Mehr" on the right, as before. */
+  .row-title-pair {
+    width: auto;
+    gap: 8px;
+  }
+
+  .row-title-place {
+    display: none;
+  }
+
+  /* Fullscreen's title sits along the bottom of the screen rather than
+     across the middle of the photo. */
+  .fullscreen-title {
+    top: auto;
+    bottom: 13px;
+    transform: none;
+  }
+
+  /* No room for two 305px footer columns: they stack, left-aligned, with
+     "Legal" under them. */
+  .footer-contact {
+    grid-template-columns: 1fr;
+    justify-content: start;
+    gap: 14px;
+  }
+
+  #bottomFooter {
+    padding: 20px 10px 13px;
+  }
+
+  .footer-legal {
+    position: static;
+    margin-top: 14px;
+  }
+
+  /* Nothing should reach past the side of the screen on a phone, and if
+     anything ever does, clipping it beats letting the page scroll sideways —
+     the stack's images are sized to the viewport, so a horizontal scroll
+     would drag the one being looked at off its own screen. overflow-x: clip
+     rather than hidden, because hidden would make the root a scroll container
+     and break .sticky-viewport's position: sticky, which the entire stack
+     hangs off. */
+  html,
+  body {
+    overflow-x: clip;
+  }
+
+  /* --- Top nav ---------------------------------------------------------
+     Three links across the top and nothing else: About, Index, Kategorie.
+     The other half of each of the nav's two pairs, and the runs of &nbsp;
+     padding out their separators, are marked in index.html and dropped here —
+     they're sized for the 1920px reference frame and are on their own wider
+     than a phone screen. */
+  .nav-desktop-only {
+    display: none;
+  }
+
+  /* display: contents drops the two .nav-block wrappers' own boxes without
+     touching the markup, so the three surviving links become flex items of
+     the nav itself. An equal third each, rather than plain space-between:
+     "About" and "Kategorie" are different widths, and spacing merely between
+     them would push "Index" off centre by that difference — thirds put it in
+     the middle of the screen while still holding the outer two against the
+     edges. (.nav-center is out of flow here, see below, so it isn't one of
+     the three.) */
+  .nav-left,
+  .nav-right {
+    display: contents;
+  }
+
+  .top-nav {
+    justify-content: space-between;
+    /* The base rule says `align-items: top`, which isn't a value align-items
+       accepts — it's been falling back to stretch all along. Harmless for a
+       row of desktop text nodes, but these items are now the nav's own
+       children, so say what was meant. */
+    align-items: flex-start;
+  }
+
+  .nav-left > a,
+  .nav-left > span,
+  .nav-right > span {
+    flex: 1 1 0;
+  }
+
+  .nav-left > a {
+    text-align: left;
+  }
+
+  .nav-left > span {
+    text-align: center;
+  }
+
+  .nav-right > span {
+    text-align: right;
+  }
+
+  /* "Index" is dimmed on desktop as the unselected half of Overview / Index
+     (see .is-inactive in theme.css). With Overview gone there's nothing left
+     for it to read as dim *against*, so it takes its place as one of three
+     plain links. Scoped to this one element so the theme toggle's own
+     .is-inactive dimming is untouched. */
+  .nav-left > span > .is-inactive {
+    opacity: 1;
+  }
+
+  /* --- Logo ------------------------------------------------------------
+     Out of the nav's flow entirely, because the row of links now occupies
+     the line the logo sits on at this width, and because its own movement
+     has nothing to do with theirs: it starts centred on the screen and
+     slides up and off the top as the intro runs, handing the screen to the
+     first row of photographs (see updateIntroLogo in sketch.js, which drives
+     the Y and never touches X — the centring here is what holds, so the
+     wordmark can't drift sideways on the way out).
+
+     Absolutely positioned against .top-nav rather than fixed: a fixed child
+     of a transformed ancestor is positioned against that ancestor anyway, and
+     .top-nav carries a transform of its own. Its own padding is repeated so
+     the logo lines up with everything else in the nav rather than running
+     into the screen edges — an absolutely positioned box resolves against the
+     padding box, which includes that padding rather than being inset by it. */
+  .nav-center {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 0 1.25rem;
+  }
+
+  /* padding-right on desktop pulls the wordmark's own centre back to the
+     viewport's, correcting for a nav-center box that's wider on the right
+     than the ink is. Here the box is centred on the screen directly, so that
+     correction would only push the ink back off centre. */
+  .nav-logo {
+    width: 100%;
+    padding-right: 0;
+  }
+}

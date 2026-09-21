@@ -1,0 +1,134 @@
+/* Legal page (legal-page.html), Figma 51:12. Same type as the Info panel:
+   13px mono, gray uppercase labels 8px above their text. Impressum on the
+   left half, Datenschutz on the right half from the middle of the screen,
+   each Datenschutz section as a heading column (289px at 1920) and a text
+   column (627px), 24px apart, sections 100px apart. The nav buttons come
+   from panels.css. */
+
+.legal-page {
+  margin: 0;
+  font-family: "IBM Plex Mono", monospace;
+  font-weight: 400;
+  font-size: 13px;
+  letter-spacing: -0.01em;
+  line-height: 16.9px;
+  color: var(--fg);
+}
+
+.legal-page * {
+  box-sizing: border-box;
+}
+
+/* The nav's links look like the home page's buttons. */
+.legal-page .panel-nav a {
+  text-decoration: none;
+}
+
+/* --- Faded gallery behind the text ------------------------------------ */
+.legal-backdrop {
+  position: fixed;
+  inset: 34px 17px 11px;
+  z-index: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  opacity: 0.04;
+  pointer-events: none;
+}
+
+.legal-backdrop-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.legal-backdrop-row img {
+  display: block;
+  height: 7.3vh;
+  width: auto;
+}
+
+.legal-backdrop-row img.is-large {
+  height: 65vh;
+}
+
+/* --- Content ------------------------------------------------------------ */
+/* Above the backdrop (both are positioned, so it's their z-index that
+   decides, not source order). */
+.legal-main {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 48px 20px 100px;
+}
+
+.legal-main p,
+.legal-main ul,
+.legal-main h2,
+.legal-main h3 {
+  margin: 0;
+  font: inherit;
+}
+
+.legal-label {
+  margin-bottom: 8px !important;
+  line-height: 14.3px !important;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  color: #c0c0c0;
+}
+
+.legal-imprint {
+  padding-top: 7px;
+  padding-right: 24px;
+}
+
+.legal-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 100px;
+}
+
+.legal-section {
+  display: grid;
+  grid-template-columns: 289fr 627fr;
+  gap: 24px;
+}
+
+.legal-section-body ul {
+  padding: 0 0 0 15px;
+  list-style: none;
+}
+
+.legal-section-body li {
+  position: relative;
+}
+
+.legal-section-body li::before {
+  content: "•";
+  position: absolute;
+  left: -10px;
+}
+
+/* --- Phone -------------------------------------------------------------- */
+@media (max-width: 768px) {
+  .legal-main {
+    grid-template-columns: 1fr;
+    gap: 48px;
+    padding: 56px 10px 60px;
+  }
+
+  .legal-imprint {
+    padding-right: 0;
+  }
+
+  .legal-sections {
+    gap: 40px;
+  }
+
+  .legal-section {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+}

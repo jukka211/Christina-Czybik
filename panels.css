@@ -1,0 +1,430 @@
+/* Info / Index panels over the homepage gallery — Figma nodes 22:764 (Info),
+   22:372 (Index) and 22:498 (both). Measurements are taken at the 1920px
+   reference frame. Column positions are grid fractions of the frame's
+   15px–1904px content width so they scale with the viewport. Type stays at
+   a fixed 13px like the rest of the site. See panels.js for behavior. */
+
+:root {
+  --panel-muted: #c0c0c0;
+  --panel-inset-left: 15px;
+  --panel-inset-right: 16px;
+  /* Bottom edge of the Info/Index buttons (9px top + 25px tall). */
+  --panel-nav-bottom: 34px;
+}
+
+/* --- Top nav: logo only, centered ---------------------------------------
+   The About / Index / Kategorie links are gone, and with them the uneven
+   left/right blocks that .nav-logo's padding-right used to compensate for.
+   The logo box is now centered by itself, so the padding goes and the width
+   shrinks by the same amount. The drawn wordmark keeps its old size. */
+.top-nav--solo {
+  justify-content: center;
+}
+
+/* The logo's resting (small) position lines up with the top of the Info /
+   Index buttons (9px). The Projekte / Kategorien switch that shares the
+   middle waits above the screen until the logo has slid out (see
+   updateTopNav in sketch.js). The intro scales the logo from its own
+   top-left corner, so it lands here too. Desktop only: the phone logo is
+   positioned on its own (see style.css). */
+@media (min-width: 769px) {
+  .top-nav--solo {
+    padding-top: 9px;
+  }
+}
+
+.top-nav--solo .nav-logo {
+  width: 12.74vw;
+  padding-right: 0;
+}
+
+/* --- Info / Index buttons -----------------------------------------------
+   Figma 33:1316. Three columns: Info on the left, the middle slot centered
+   on the screen (not merely between two differently wide buttons), Index
+   on the right. */
+.panel-nav {
+  position: fixed;
+  top: 9px;
+  left: var(--panel-inset-left);
+  right: var(--panel-inset-right);
+  z-index: 110;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: start;
+  gap: 10px;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+.panel-toggle[data-panel="info"] {
+  justify-self: start;
+}
+
+.panel-toggle[data-panel="index"] {
+  justify-self: end;
+}
+
+/* Each button (and each half of the Projekte / Kategorien switch) is a
+   small tab as wide as its text: 4px padding, a 1px line along the top,
+   light gray fill. */
+.panel-toggle,
+.view-switch-option {
+  display: flex;
+  align-items: center;
+  gap: 1ch;
+  /* 3px on top: Figma draws the 1px line inside the 4px padding. */
+  padding: 3px 4px 4px;
+  border: 0;
+  border-top: 0px solid var(--fg);
+  background: #f0f0f0;
+  color: #3b3b3b;
+  font-family: "IBM Plex Mono", monospace;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 16.9px;
+  letter-spacing: 0;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.panel-toggle {
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.panel-nav.nav-hidden .panel-toggle {
+  pointer-events: none;
+}
+
+/* The middle slot. It holds the Projekte / Kategorien switch and "Back"
+   stacked in one grid cell, and shows one at a time: the switch on the
+   gallery, "Back" while a panel is open. Hidden rather than removed, so
+   nothing shifts when they trade places. */
+.panel-nav-center {
+  display: grid;
+  justify-items: center;
+}
+
+.panel-nav-center > * {
+  grid-area: 1 / 1;
+}
+
+/* Two tabs 4px apart, the selected one gray, the other white. Layout only
+   for now (see index.html), so no pointer cursor yet. */
+.view-switch {
+  display: flex;
+  gap: 4px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  cursor: default;
+  pointer-events: auto;
+}
+
+.view-switch-option {
+  background: #fff;
+}
+
+.view-switch-option.is-active {
+  background: #f0f0f0;
+}
+
+.panel-nav.nav-hidden .view-switch {
+  pointer-events: none;
+}
+
+body:not(.panels-open) .panel-back,
+body.panels-open .view-switch {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* Fullscreen's Back (index.html): centered at the top, where the panels'
+   "Back" sits, above the fullscreen photo. Fades in and out with it. */
+.fullscreen-back {
+  position: fixed;
+  top: 9px;
+  left: 50%;
+  z-index: 120;
+  transform: translateX(-50%);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+
+body.is-fullscreen .fullscreen-back {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+/* No logo while a panel is open. */
+body.panels-open .top-nav {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* --- Gallery behind the panels ------------------------------------------
+   Every row drops to 4%. A row previewing a project from the Index (see
+   panels.js) comes back to full opacity. Row titles and the contact footer
+   aren't in the design here, so they hide. Scrolling is locked so the
+   three-row frame the panels open on stays put. */
+.row {
+  transition: opacity 0.3s ease;
+}
+
+body.panels-open .row {
+  opacity: 0.04;
+  pointer-events: none;
+}
+
+body.panels-open .row.is-project-preview {
+  opacity: 1;
+}
+
+body.panels-open .row-title,
+body.panels-open #bottomFooter {
+  opacity: 0;
+  pointer-events: none;
+}
+
+html.panels-open {
+  overflow: hidden;
+}
+
+/* --- Panels -------------------------------------------------------------- */
+.panel {
+  position: fixed;
+  left: 0;
+  width: 100%;
+  z-index: 90;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+  padding: 0 var(--panel-inset-right) 0 var(--panel-inset-left);
+  font-family: "IBM Plex Mono", monospace;
+  font-weight: 400;
+  font-size: 13px;
+  letter-spacing: 0;
+  color: var(--fg);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.panel::-webkit-scrollbar {
+  display: none;
+}
+
+.panel.is-open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.panel a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.panel a:hover {
+  text-decoration: underline;
+}
+
+.panel-label {
+  margin: 0;
+  font: inherit;
+  line-height: 14.3px;
+  text-transform: uppercase;
+  color: var(--panel-muted);
+}
+
+/* Index: top half, starting under the buttons. As tall as its table, up
+   to the screen's midline, so the Info panel can use whatever it leaves. */
+.panel-index {
+  top: var(--panel-nav-bottom);
+  max-height: calc(50% - var(--panel-nav-bottom));
+  padding-top: 26px;
+}
+
+/* Info: ends 24px above the gallery's bottom row (sketch.js publishes where
+   that row starts as --stack-bottom-row-top), so the project previews from
+   the Index never run under its text. It grows upward from there to 24px
+   short of whatever is above it, the end of the Index table or the buttons
+   (--panel-info-ceiling, set by panels.js), and scrolls past that. */
+.panel-info {
+  --panel-info-bottom: calc(var(--stack-bottom-row-top, 73px) + 24px);
+  bottom: var(--panel-info-bottom);
+  max-height: calc(100% - var(--panel-info-bottom) - var(--panel-info-ceiling, 50%) - 24px);
+}
+
+/* --- Index table --------------------------------------------------------
+   Columns at 1920: Projekt 15, Kategorie 640, Auftraggeber 958 (left) and
+   Ort ending at 1283 (right-aligned, sharing a column), Jahr ending at 1904.
+   Each row is its own grid on the same fractions, so the columns line up. */
+.index-row {
+  display: grid;
+  grid-template-columns: 625fr 318fr 325fr 621fr;
+  line-height: 14.3px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.index-row > span {
+  grid-row: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.col-project {
+  grid-column: 1;
+  padding-right: 1em;
+}
+
+.col-category {
+  grid-column: 2;
+  padding-right: 1em;
+}
+
+.col-client {
+  grid-column: 3;
+  justify-self: start;
+}
+
+.col-place {
+  grid-column: 3;
+  justify-self: end;
+  text-align: right;
+}
+
+.col-year {
+  grid-column: 4;
+  justify-self: end;
+  text-align: right;
+}
+
+.index-head {
+  margin-bottom: 4px;
+  color: var(--panel-muted);
+}
+
+.index-body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+/* Clicking a row opens the project in fullscreen (panels.js). */
+.index-body .index-row {
+  cursor: pointer;
+}
+
+/* The row whose photos are showing in the bottom row turns gray. */
+.index-body .index-row:hover {
+  color: var(--panel-muted);
+}
+
+/* --- Info grid ----------------------------------------------------------
+   Columns at 1920: Info 15, Kontakt 640, Ausgewählte Kunden 958, Bio 1253
+   to 1904. */
+.info-grid {
+  display: grid;
+  grid-template-columns: 625fr 318fr 295fr 651fr;
+  align-items: start;
+}
+
+.info-col {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.info-col-contact,
+.info-col-clients {
+  padding-right: 1em;
+}
+
+.info-upper {
+  margin: 0;
+  line-height: 14.3px;
+  text-transform: uppercase;
+}
+
+/* The e-mail address has no break points, so it can run past its column
+   at narrow widths. */
+.info-col-contact .info-upper {
+  overflow-wrap: anywhere;
+}
+
+.info-clients {
+  line-height: 14px;
+}
+
+.info-portrait {
+  display: block;
+  width: 170px;
+  max-width: 100%;
+  height: auto;
+  margin-top: 7px;
+}
+
+.info-bio p {
+  margin: 0;
+  line-height: 16.9px;
+}
+
+.info-bio p + p {
+  margin-top: 16.9px;
+}
+
+/* --- Phone layout --------------------------------------------------------
+   Same breakpoint as style.css / MOBILE_QUERY in sketch.js. The buttons are
+   small enough to keep their desktop layout, and each panel keeps to what
+   fits a narrow screen: Projekt + Jahr in the Index, and a two-column Info with
+   the bio running full width below. */
+@media (max-width: 768px) {
+  .top-nav--solo .nav-logo {
+    width: 100%;
+  }
+
+  .index-row {
+    grid-template-columns: 1fr auto;
+  }
+
+  .col-category,
+  .col-client,
+  .col-place {
+    display: none;
+  }
+
+  .col-year {
+    grid-column: 2;
+    padding-left: 1em;
+  }
+
+  /* One panel at a time on a phone (panels.js), each filling the screen
+     below the buttons and scrolling on its own. */
+  .panel-index,
+  .panel-info {
+    top: var(--panel-nav-bottom);
+    bottom: 0;
+    max-height: none;
+    padding-top: 26px;
+    padding-bottom: 20px;
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr 1fr;
+    row-gap: 24px;
+  }
+
+  /* Full width for Kontakt too, so the e-mail address fits on one line
+     instead of breaking mid-word. */
+  .info-col-contact,
+  .info-col-bio {
+    grid-column: 1 / -1;
+  }
+}
