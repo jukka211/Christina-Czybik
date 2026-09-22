@@ -1,15 +1,16 @@
 /* Info / Index panels over the homepage gallery — Figma nodes 22:764 (Info),
    22:372 (Index) and 22:498 (both). Measurements are taken at the 1920px
    reference frame. Column positions are grid fractions of the frame's
-   15px–1904px content width so they scale with the viewport. Type stays at
-   a fixed 13px like the rest of the site. See panels.js for behavior. */
+   15px–1904px content width so they scale with the viewport. Type is 13px,
+   scaled with the screen by --px (theme.css). See panels.js for behavior. */
 
 :root {
   --panel-muted: #c0c0c0;
   --panel-inset-left: 15px;
   --panel-inset-right: 16px;
-  /* Bottom edge of the Info/Index buttons (9px top + 25px tall). */
-  --panel-nav-bottom: 34px;
+  /* Bottom edge of the Info/Index buttons (9px top + 25px tall, the height
+     scaling with the type). */
+  --panel-nav-bottom: calc(9px + 25 * var(--px));
 }
 
 /* --- Top nav: logo only, centered ---------------------------------------
@@ -73,15 +74,15 @@
   align-items: center;
   gap: 1ch;
   /* 3px on top: Figma draws the 1px line inside the 4px padding. */
-  padding: 3px 4px 4px;
+  padding: calc(3 * var(--px)) calc(4 * var(--px)) calc(4 * var(--px));
   border: 0;
   border-top: 0px solid var(--fg);
   background: #f0f0f0;
   color: #3b3b3b;
   font-family: "IBM Plex Mono", monospace;
   font-weight: 400;
-  font-size: 13px;
-  line-height: 16.9px;
+  font-size: calc(13 * var(--px));
+  line-height: calc(16.9 * var(--px));
   letter-spacing: 0;
   text-align: left;
   white-space: nowrap;
@@ -128,6 +129,20 @@
 
 .view-switch-option.is-active {
   background: #f0f0f0;
+}
+
+/* Hover swaps each tab's fill: gray ones turn white, white ones gray. Only
+   where there's a real pointer, so a tap on a phone doesn't leave a tab
+   stuck in its hover color. */
+@media (hover: hover) {
+  .panel-toggle:hover,
+  .view-switch-option.is-active:hover {
+    background: #fff;
+  }
+
+  .view-switch-option:not(.is-active):hover {
+    background: #f0f0f0;
+  }
 }
 
 .panel-nav.nav-hidden .view-switch {
@@ -206,7 +221,7 @@ html.panels-open {
   padding: 0 var(--panel-inset-right) 0 var(--panel-inset-left);
   font-family: "IBM Plex Mono", monospace;
   font-weight: 400;
-  font-size: 13px;
+  font-size: calc(13 * var(--px));
   letter-spacing: 0;
   color: var(--fg);
   opacity: 0;
@@ -235,7 +250,7 @@ html.panels-open {
 .panel-label {
   margin: 0;
   font: inherit;
-  line-height: 14.3px;
+  line-height: calc(14.3 * var(--px));
   text-transform: uppercase;
   color: var(--panel-muted);
 }
@@ -260,13 +275,15 @@ html.panels-open {
 }
 
 /* --- Index table --------------------------------------------------------
-   Columns at 1920: Projekt 15, Kategorie 640, Auftraggeber 958 (left) and
-   Ort ending at 1283 (right-aligned, sharing a column), Jahr ending at 1904.
+   Columns at 1920: Projekt 15, Kategorie 640, Auftraggeber 958, Ort 1253
+   (all left-aligned), and Jahr ending at 1904 (right-aligned, sharing Ort's
+   column). The same fractions as .info-grid below, so Ort sits on the Bio
+   text's left edge in the Info panel.
    Each row is its own grid on the same fractions, so the columns line up. */
 .index-row {
   display: grid;
-  grid-template-columns: 625fr 318fr 325fr 621fr;
-  line-height: 14.3px;
+  grid-template-columns: 625fr 318fr 295fr 651fr;
+  line-height: calc(14.3 * var(--px));
   text-transform: uppercase;
   white-space: nowrap;
 }
@@ -290,13 +307,13 @@ html.panels-open {
 
 .col-client {
   grid-column: 3;
-  justify-self: start;
+  padding-right: 1em;
 }
 
 .col-place {
-  grid-column: 3;
-  justify-self: end;
-  text-align: right;
+  grid-column: 4;
+  justify-self: start;
+  padding-right: 1em;
 }
 
 .col-year {
@@ -349,7 +366,7 @@ html.panels-open {
 
 .info-upper {
   margin: 0;
-  line-height: 14.3px;
+  line-height: calc(14.3 * var(--px));
   text-transform: uppercase;
 }
 
@@ -360,7 +377,7 @@ html.panels-open {
 }
 
 .info-clients {
-  line-height: 14px;
+  line-height: calc(14 * var(--px));
 }
 
 .info-portrait {
@@ -373,11 +390,11 @@ html.panels-open {
 
 .info-bio p {
   margin: 0;
-  line-height: 16.9px;
+  line-height: calc(16.9 * var(--px));
 }
 
 .info-bio p + p {
-  margin-top: 16.9px;
+  margin-top: calc(16.9 * var(--px));
 }
 
 /* --- Phone layout --------------------------------------------------------

@@ -137,10 +137,12 @@ let MAX_VH = DESKTOP_MAX_VH;
 let MIN_VH = DESKTOP_MIN_VH;
 const ROW_GAP_REM = 4;
 // Desktop only: the space the row stack keeps clear around itself. The top
-// inset clears the Info/Index buttons (their bottom edge is at 34px). The
-// three-row frame (small / large / small) is sized to fill exactly what's
-// left, see refreshMetrics.
-const STACK_INSET_TOP_PX = 44;
+// inset clears the Info/Index buttons by STACK_INSET_TOP_GAP_PX; their bottom
+// edge moves with the type size (--px in theme.css), so refreshMetrics
+// measures it into stackInsetTopPx. The three-row frame (small / large /
+// small) is sized to fill exactly what's left, see refreshMetrics.
+const STACK_INSET_TOP_GAP_PX = 10;
+let stackInsetTopPx = 44;
 const STACK_INSET_SIDE_PX = 10;
 const STACK_INSET_BOTTOM_PX = 10;
 // How far the stack's center sits below the viewport's, in px, so it's
@@ -318,10 +320,12 @@ const fullscreenTitleCount = document.getElementById("fullscreenTitleCount");
 const panelNav = document.getElementById("panelNav");
 const viewSwitch = document.getElementById("viewSwitch");
 // How far up the Projekte / Kategorien switch sits while the logo is in the
-// nav (see updateTopNav): enough to clear the screen entirely, since the
-// switch starts 9px down and is 25px tall, and its gray fill would
-// otherwise peek in along the top edge.
-const VIEW_SWITCH_HIDDEN_OFFSET_PX = 40;
+// nav (see updateTopNav): its own bottom edge plus VIEW_SWITCH_HIDDEN_MARGIN_PX,
+// enough to clear the screen entirely, or its gray fill would peek in along
+// the top edge. Measured in refreshMetrics, since the switch's height follows
+// the type size.
+const VIEW_SWITCH_HIDDEN_MARGIN_PX = 6;
+let viewSwitchHiddenOffsetPx = 40;
 // Which row (if any) is currently shown in fullscreen — set by clicking a
 // row's active image, cleared by clicking it again.
 let fullscreenRowIndex = null;
@@ -352,6 +356,15 @@ function mod(value, total) {
 function refreshMetrics() {
   isMobile = MOBILE_QUERY.matches;
 
+  // Both follow the Info / Index buttons, whose size follows the type.
+  // offsetTop/offsetHeight are layout values, so the switch's own slide
+  // transform doesn't leak into its measurement.
+  if (panelNav) {
+    const indexToggle = panelNav.querySelector('.panel-toggle[data-panel="index"]');
+    if (indexToggle) stackInsetTopPx = panelNav.offsetTop + indexToggle.offsetTop + indexToggle.offsetHeight + STACK_INSET_TOP_GAP_PX;
+    if (viewSwitch) viewSwitchHiddenOffsetPx = panelNav.offsetTop + viewSwitch.offsetTop + viewSwitch.offsetHeight + VIEW_SWITCH_HIDDEN_MARGIN_PX;
+  }
+
   if (isMobile) {
     // Measured before anything else, because every size below is bounded by
     // it — see getMobileLargeMaxHeightVh and getMobileSmallHeightVh.
@@ -373,14 +386,14 @@ function refreshMetrics() {
     // the top and bottom insets.
     const rootFontSizePx = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
     const gapPx = ROW_GAP_REM * rootFontSizePx;
-    const availablePx = window.innerHeight - STACK_INSET_TOP_PX - STACK_INSET_BOTTOM_PX;
+    const availablePx = window.innerHeight - stackInsetTopPx - STACK_INSET_BOTTOM_PX;
     const frameVh = DESKTOP_MAX_VH + DESKTOP_MIN_VH * 2;
     const scale = Math.max((availablePx - gapPx * 2) / ((frameVh / 100) * window.innerHeight), 0.1);
 
     MAX_VH = DESKTOP_MAX_VH * scale;
     MIN_VH = DESKTOP_MIN_VH * scale;
     VISIBLE_RANGE = DESKTOP_VISIBLE_RANGE;
-    stackShiftPx = (STACK_INSET_TOP_PX - STACK_INSET_BOTTOM_PX) / 2;
+    stackShiftPx = (stackInsetTopPx - STACK_INSET_BOTTOM_PX) / 2;
   }
 
   // Read by .row / .row-title in style.css.
@@ -1364,10 +1377,10 @@ function updateTopNav(rowZeroDistance) {
   const travelPx = Math.max(topNav.offsetHeight, navCenter.offsetTop + navCenter.offsetHeight);
   topNav.style.transform = `translateY(${-rowZeroDistance * travelPx}px)`;
   // The Projekte / Kategorien switch takes the logo's place: it waits
-  // VIEW_SWITCH_HIDDEN_OFFSET_PX up, above the top edge, while the logo is
+  // viewSwitchHiddenOffsetPx up, above the top edge, while the logo is
   // showing, and slides down into its place as the logo slides out.
   if (viewSwitch) {
-    viewSwitch.style.transform = `translateY(${-(1 - rowZeroDistance) * VIEW_SWITCH_HIDDEN_OFFSET_PX}px)`;
+    viewSwitch.style.transform = `translateY(${-(1 - rowZeroDistance) * viewSwitchHiddenOffsetPx}px)`;
   }
 }
 

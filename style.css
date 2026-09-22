@@ -25,7 +25,7 @@ body {
   padding: 0.875rem 1.25rem;
   font-family: "IBM Plex Mono", monospace;
   font-weight: 400;
-  font-size: 12.5px;
+  font-size: calc(12.5 * var(--px));
   letter-spacing: 0.25em;
   transition: opacity 0.4s ease;
   will-change: transform;
@@ -152,9 +152,9 @@ body.is-intro .nav-center {
   background: var(--bg);
   font-family: "IBM Plex Mono", monospace;
   font-weight: 400;
-  font-size: 13px;
+  font-size: calc(13 * var(--px));
   letter-spacing: 0;
-  line-height: 14.3px;
+  line-height: calc(14.3 * var(--px));
   color: var(--fg);
   transition: opacity 0.4s ease;
   will-change: transform;
@@ -265,8 +265,8 @@ body.is-intro .nav-center {
   padding: 0 16px 0 15px;
   font-family: "IBM Plex Mono", monospace;
   font-weight: 400;
-  font-size: 13px;
-  line-height: 14.3px;
+  font-size: calc(13 * var(--px));
+  line-height: calc(14.3 * var(--px));
   letter-spacing: 0;
   text-transform: uppercase;
   white-space: nowrap;
@@ -302,7 +302,7 @@ body.is-intro .row-title {
 }
 
 .row-title-pair {
-  width: 204px;
+  width: calc(204 * var(--px));
   display: flex;
   justify-content: space-between;
 }
@@ -368,7 +368,7 @@ body.is-intro .row-title {
   padding: 2px 1.25rem;
   font-family: "IBM Plex Mono", monospace;
   font-weight: 400;
-  font-size: 13px;
+  font-size: calc(13 * var(--px));
   letter-spacing: 0.25em;
   pointer-events: none;
   opacity: 0;
@@ -596,11 +596,11 @@ body.is-intro .row-title {
     display: inline-block;
     position: relative;
     margin: 0;
-    padding: 3px 4px 4px;
+    padding: calc(3 * var(--px)) calc(4 * var(--px)) calc(4 * var(--px));
     border: 0;
     background: #f0f0f0;
     color: #3b3b3b;
-    line-height: 16.9px;
+    line-height: calc(16.9 * var(--px));
     letter-spacing: 0;
     text-transform: none;
   }

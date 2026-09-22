@@ -13,6 +13,20 @@
 :root {
   --bg: #fff;
   --fg: #000;
+  /* The site's type unit: every font-size and px line-height (and the few
+     sizes that follow the type, like the Info / Index buttons) is written as
+     calc(N * var(--px)). On desktop it scales with the screen width, taken
+     from a MacBook Air 15" (1710px wide, where 1 --px is 0.8925px: the type
+     runs ~11% under the design's sizes), so the type keeps its proportion to
+     the layout: bigger on a large display, smaller on a 13" laptop. Clamped
+     so it never gets unreadably small or oversized. Phones keep plain px. */
+  --px: 1px;
+}
+
+@media (min-width: 769px) {
+  :root {
+    --px: clamp(0.714px, calc(100vw / 1710 * 0.8925), 1.428px);
+  }
 }
 
 html,

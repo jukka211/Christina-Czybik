@@ -1,6 +1,6 @@
 /* Opening photo grid (intro-grid.js), Figma 39:2 / 39:141 / 39:282.
    Photos in 100 x 150 boxes at the 1920px reference, spread edge to edge
-   across the screen from just under the buttons (41px) to 14px above the
+   across the screen from just under the buttons (7px below them) to 14px above the
    bottom, over the full-width logo. The boxes shrink on screens too short
    for four rows of them. object-fit: contain lets landscape photos sit in
    the middle of their box, as in the design. The trailing * 0.85 shrinks
@@ -9,7 +9,7 @@
   --intro-cell-h: calc(min(7.81vw, calc((100vh - 55px) / var(--intro-rows) - 10px)) * 0.85);
   --intro-cell-w: calc(var(--intro-cell-h) * 2 / 3);
   position: fixed;
-  top: 41px;
+  top: calc(var(--panel-nav-bottom) + 7px);
   right: 18px;
   bottom: 14px;
   left: 19px;

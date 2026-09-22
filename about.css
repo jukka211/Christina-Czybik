@@ -14,7 +14,7 @@
   align-items: center;
   font-family: "IBM Plex Mono", monospace;
   font-weight: 400;
-  font-size: 12.5px;
+  font-size: calc(12.5 * var(--px));
   line-height: 1.375;
   color: var(--fg);
 }
