@@ -581,6 +581,7 @@ function setUpRow(row, rowIndex) {
     activeIndex += 1;
     dismissSwipeHint();
     commitActiveIndex();
+    stopAutoAdvance();
   });
   row.appendChild(swipeHint);
 
@@ -748,6 +749,7 @@ function setUpRow(row, rowIndex) {
 
     activeIndex += zone === "left" ? -1 : 1;
     commitActiveIndex();
+    stopAutoAdvance();
   });
 
   // Desktop's rows are the same height whichever image is active, so stepping
@@ -817,7 +819,10 @@ function setUpRow(row, rowIndex) {
     const threshold = row.clientWidth * SWIPE_COMMIT_FRACTION;
     if (dragOffsetPx <= -threshold) activeIndex += 1;
     else if (dragOffsetPx >= threshold) activeIndex -= 1;
-    if (Math.abs(dragOffsetPx) >= threshold) dismissSwipeHint();
+    if (Math.abs(dragOffsetPx) >= threshold) {
+      dismissSwipeHint();
+      stopAutoAdvance();
+    }
 
     dragOffsetPx = 0;
     settleSwipe();
@@ -1057,6 +1062,23 @@ function setUpRow(row, rowIndex) {
     centerColumnOnActiveImage,
     getActiveIndex() {
       return activeIndex;
+    },
+    // Auto-advance's step (see autoAdvance): the same move as clicking the
+    // right half, slid into place on mobile like a finished swipe, since
+    // there the whole stack re-spaces around the new image's height.
+    stepForward() {
+      activeIndex += 1;
+      if (isMobile) {
+        settleSwipe();
+        update();
+      } else {
+        applyLayout();
+      }
+    },
+    // A finger is on the row (or it's still being dragged), so auto-advance
+    // mustn't move it out from under the gesture.
+    isBusy() {
+      return touchAxis !== null || dragOffsetPx !== 0;
     },
     // Drops every mounted image so the next layout pass mounts fresh ones
     // from whatever getRowFileName now returns — used when the row's file
@@ -1503,6 +1525,13 @@ function update() {
     return;
   }
   lastActivePosition = activePosition;
+  // A different row has taken the middle: give it the full wait before its
+  // first auto step.
+  const middleRowIndex = Math.round(activePosition);
+  if (middleRowIndex !== autoAdvanceRowIndex) {
+    autoAdvanceRowIndex = middleRowIndex;
+    restartAutoAdvance();
+  }
   // Mobile only: a portrait image in the middle takes so much more of the
   // screen's height than a landscape one that the small tier has to be
   // resolved against whatever is actually centred right now, not once at
@@ -1594,6 +1623,42 @@ function update() {
 }
 
 let lastActivePosition = -1;
+
+// Auto-advance: the large (middle) row steps to its next image on its own,
+// AUTO_ADVANCE_MS after it came to rest and then every AUTO_ADVANCE_MS, the
+// same step a click on its right half makes. Another row taking the middle
+// restarts the wait. The first manual step (a left / right click, a swipe,
+// the swipe hint) switches it off for good, until the next page load: the
+// visitor has taken over. It holds while the page is between rows, during the intro, in
+// fullscreen, with a panel open, and while the tab is in the background.
+const AUTO_ADVANCE_MS = 2000;
+let autoAdvanceTimeoutId = null;
+let autoAdvanceRowIndex = null;
+let autoAdvanceStopped = false;
+
+function restartAutoAdvance() {
+  window.clearTimeout(autoAdvanceTimeoutId);
+  if (autoAdvanceStopped) return;
+  autoAdvanceTimeoutId = window.setTimeout(autoAdvance, AUTO_ADVANCE_MS);
+}
+
+function stopAutoAdvance() {
+  autoAdvanceStopped = true;
+  window.clearTimeout(autoAdvanceTimeoutId);
+}
+
+function autoAdvance() {
+  restartAutoAdvance();
+  if (document.hidden || fullscreenRowIndex !== null) return;
+  const body = document.body.classList;
+  if (body.contains("panels-open") || body.contains("is-intro") || body.contains("is-intro-grid")) return;
+  // Only a row resting fully open, not one mid-handover to the next.
+  const rowIndex = Math.round(lastActivePosition);
+  if (rowIndex < 0 || rowIndex >= ROW_COUNT || Math.abs(lastActivePosition - rowIndex) > 0.001) return;
+  const controller = rowControllers[rowIndex];
+  if (controller.isBusy()) return;
+  controller.stepForward();
+}
 
 // The large logo is a one-time opening. Once the intro has run its course
 // (row 0 fully open, and the logo's automatic shrink no longer moving the
