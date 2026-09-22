@@ -557,6 +557,23 @@ function setUpRow(row, rowIndex) {
   let settleTimeoutId = null;
   const mounted = new Map(); // poolIndex -> img element
 
+  // Mobile only (hidden on desktop by style.css): an arrow pinned inside the
+  // current image's right edge, telling you the row swipes. Tapping it steps
+  // to the next image, the same as swiping would.
+  const swipeHint = document.createElement("button");
+  swipeHint.type = "button";
+  swipeHint.className = "row-swipe-hint";
+  swipeHint.setAttribute("aria-label", "Next image");
+  swipeHint.innerHTML = '<img src="arrow.svg" alt="">';
+  swipeHint.addEventListener("click", (event) => {
+    event.stopPropagation();
+    row.classList.remove("is-pressed");
+    activeIndex += 1;
+    dismissSwipeHint();
+    commitActiveIndex();
+  });
+  row.appendChild(swipeHint);
+
   // Sizes and places one image in mobile's one-image-per-row layout. Each is
   // sized from its own shape rather than fitted into a shared box, so a
   // portrait frame is as wide as a landscape one and simply taller; collapsing
@@ -572,6 +589,18 @@ function setUpRow(row, rowIndex) {
     img.style.width = `${heightVh * aspect}vh`;
     const offsetPx = (poolIndex - activeIndex) * rowWidthPx + dragOffsetPx;
     img.style.transform = `translate(calc(-50% + ${offsetPx}px), -50%)`;
+  }
+
+  // Rides the current image's right edge, SWIPE_HINT_INSET_PX inside it
+  // (dragged along with it mid-swipe), and fades out as the row collapses,
+  // so only the large row carries one.
+  function placeSwipeHint() {
+    const aspect = getImageAspect(getRowFileName(rowIndex, activeIndex));
+    const widthPx = lerp(getMobileLargeHeightVh(aspect), MIN_VH, rowDistance) * aspect * (window.innerHeight / 100);
+    const rightEdgePx = widthPx / 2 + dragOffsetPx;
+    swipeHint.style.transform = `translate(calc(${rightEdgePx - SWIPE_HINT_INSET_PX}px - 100%), -50%)`;
+    swipeHint.style.opacity = `${clamp(1 - rowDistance * 2, 0, 1)}`;
+    swipeHint.style.visibility = rowDistance >= 0.5 ? "hidden" : "";
   }
 
   function applyLayout() {
@@ -616,6 +645,7 @@ function setUpRow(row, rowIndex) {
     // nothing is being dragged, so this is also the resting layout.
     if (isMobile) {
       mounted.forEach((img, poolIndex) => styleMobileImage(img, poolIndex, rowWidthPx));
+      placeSwipeHint();
       return;
     }
 
@@ -777,6 +807,7 @@ function setUpRow(row, rowIndex) {
     const threshold = row.clientWidth * SWIPE_COMMIT_FRACTION;
     if (dragOffsetPx <= -threshold) activeIndex += 1;
     else if (dragOffsetPx >= threshold) activeIndex -= 1;
+    if (Math.abs(dragOffsetPx) >= threshold) dismissSwipeHint();
 
     dragOffsetPx = 0;
     settleSwipe();
@@ -795,6 +826,10 @@ function setUpRow(row, rowIndex) {
       if (!isMobile || isFullscreen || event.touches.length !== 1) return;
       touchStartX = event.touches[0].clientX;
       touchStartY = event.touches[0].clientY;
+      // Tap feedback (.row.is-pressed in style.css): on from the first touch,
+      // dropped as soon as the gesture turns out to be a swipe or a scroll,
+      // otherwise held until the tap's click opens fullscreen.
+      row.classList.add("is-pressed");
     },
     { passive: true },
   );
@@ -810,6 +845,7 @@ function setUpRow(row, rowIndex) {
       if (touchAxis === null) {
         if (Math.abs(dx) < TOUCH_AXIS_LOCK_PX && Math.abs(dy) < TOUCH_AXIS_LOCK_PX) return;
         touchAxis = Math.abs(dx) > Math.abs(dy) ? "x" : "y";
+        row.classList.remove("is-pressed");
         if (touchAxis === "y") return;
       }
 
@@ -824,7 +860,10 @@ function setUpRow(row, rowIndex) {
   );
 
   row.addEventListener("touchend", endSwipe);
-  row.addEventListener("touchcancel", endSwipe);
+  row.addEventListener("touchcancel", () => {
+    row.classList.remove("is-pressed");
+    endSwipe();
+  });
 
   // Fullscreen's own layout: a vertical column that reuses the outer
   // page's row-stacking math (getActivePosition/getCenters/getOffsets),
@@ -1053,6 +1092,16 @@ const ROW_TITLES = [
   { type: "Kat.", category: "Porträt", place: "Ort", count: "01/75" },
   { type: "Kat.", category: "Reportage", place: "Ort", count: "01/75" },
 ];
+
+// Gap between the swipe hint and the right edge of the image it sits on.
+const SWIPE_HINT_INSET_PX = 4;
+
+// Mobile's swipe hint (.row-swipe-hint in style.css) is shown until the first
+// swipe anywhere on the page actually moves a row on; then it's gone from
+// every row for good (until the next page load).
+function dismissSwipeHint() {
+  document.body.classList.add("swipe-hint-dismissed");
+}
 
 const rows = [];
 const rowTitles = [];
@@ -1403,7 +1452,10 @@ function setFullscreenRow(rowIndex) {
   const endingProject = !opening && projectFullscreen;
   if (endingProject) projectFullscreen = null;
 
-  rows.forEach((row) => row.classList.add("fullscreen-transition"));
+  rows.forEach((row) => {
+    row.classList.add("fullscreen-transition");
+    row.classList.remove("is-pressed");
+  });
   update();
   if (opening) rowControllers[rowIndex].centerColumnOnActiveImage();
   window.setTimeout(() => {

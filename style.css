@@ -391,7 +391,8 @@ body.is-intro .row-title {
    doesn't carry this class) stays instant as before; only the fullscreen
    jump itself animates. */
 .row.fullscreen-transition {
-  transition: height 0.4s ease, transform 0.4s ease, opacity 0.4s ease;
+  transition: height 0.4s ease, transform 0.4s ease, opacity 0.4s ease,
+    background-color 0.4s ease;
 }
 
 .row.fullscreen-transition > img {
@@ -430,6 +431,14 @@ body.is-intro .row-title {
   opacity: 0;
 }
 
+/* Mobile tap feedback: the touched row's box tints from the first touch
+   until the tap opens fullscreen (sketch.js toggles the class; a swipe or
+   scroll drops it again). Fades back out with the fullscreen jump itself via
+   .fullscreen-transition above. */
+.row.is-pressed {
+  background-color: #f7f7f7;
+}
+
 /* Base position only — width, height, and transform (translate, to offset
    from this centered base point) are all set inline per image by
    sketch.js whenever activeIndex changes; no transition here by default,
@@ -446,6 +455,48 @@ body.is-intro .row-title {
   object-fit: contain;
   object-position: center;
   display: block;
+}
+
+/* Mobile's swipe hint (see placeSwipeHint in sketch.js): a square the height
+   of the Info / Index tabs, white at 80%, holding arrow.svg. Anchored on the
+   row's centre like the images; sketch.js slides it out to the current
+   image's right edge. Desktop never shows it, and it goes for good once the
+   first swipe lands (body.swipe-hint-dismissed). */
+.row-swipe-hint {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .row-swipe-hint {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 1;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: 0;
+    background: rgba(255, 255, 255, 0.8);
+    cursor: pointer;
+  }
+
+  .row-swipe-hint img {
+    display: block;
+    width: 8px;
+    height: 10px;
+  }
+
+  .row.swipe-settle > .row-swipe-hint {
+    transition: transform 0.25s ease;
+  }
+
+  .row.is-fullscreen > .row-swipe-hint,
+  .swipe-hint-dismissed .row-swipe-hint {
+    display: none;
+  }
 }
 
 /* Fullscreen's layout: a vertical column reusing the outer page's own
