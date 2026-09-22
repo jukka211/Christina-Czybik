@@ -62,10 +62,11 @@ body.is-intro-grid .sticky-viewport {
 }
 
 /* On a phone the boxes are sized by the width: three small columns across,
-   leaving the logo readable between them. */
+   leaving the logo readable between them. The trailing * 0.63 shrinks them
+   37% from that fit, still spread edge to edge by space-between. */
 @media (max-width: 768px) {
   .intro-grid {
-    --intro-cell-w: min(13.6vw, calc(((100vh - 55px) / var(--intro-rows) - 10px) * 2 / 3 * 0.85));
+    --intro-cell-w: calc(min(13.6vw, calc(((100vh - 55px) / var(--intro-rows) - 10px) * 2 / 3 * 0.85)) * 0.63);
     --intro-cell-h: calc(var(--intro-cell-w) * 3 / 2);
     right: 10px;
     left: 10px;
