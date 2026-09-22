@@ -3,9 +3,10 @@
    across the screen from just under the buttons (41px) to 14px above the
    bottom, over the full-width logo. The boxes shrink on screens too short
    for four rows of them. object-fit: contain lets landscape photos sit in
-   the middle of their box, as in the design. */
+   the middle of their box, as in the design. The trailing * 0.85 shrinks
+   them 15% from that fit. */
 .intro-grid {
-  --intro-cell-h: min(7.81vw, calc((100vh - 55px) / var(--intro-rows) - 10px));
+  --intro-cell-h: calc(min(7.81vw, calc((100vh - 55px) / var(--intro-rows) - 10px)) * 0.85);
   --intro-cell-w: calc(var(--intro-cell-h) * 2 / 3);
   position: fixed;
   top: 41px;
