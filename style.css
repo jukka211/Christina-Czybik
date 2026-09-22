@@ -719,26 +719,23 @@ body.is-intro .row-title {
   }
 
   /* --- Logo ------------------------------------------------------------
-     Out of the nav's flow entirely, because the row of links now occupies
-     the line the logo sits on at this width, and because its own movement
-     has nothing to do with theirs: it starts centred on the screen and
-     slides up and off the top as the intro runs, handing the screen to the
-     first row of photographs (see updateIntroLogo in sketch.js, which drives
-     the Y and never touches X — the centring here is what holds, so the
-     wordmark can't drift sideways on the way out).
+     Rests at the top of the screen between the Info and Index buttons, on
+     their line (9px, like .panel-nav), centred and --mobile-logo-width wide.
+     The intro runs the same as on desktop (updateIntroLogo in sketch.js):
+     it starts full width in the middle of the screen and shrinks up into
+     this spot, then slides out with the nav as you scroll on (updateTopNav).
 
      Absolutely positioned against .top-nav rather than fixed: a fixed child
      of a transformed ancestor is positioned against that ancestor anyway, and
-     .top-nav carries a transform of its own. Its own padding is repeated so
-     the logo lines up with everything else in the nav rather than running
-     into the screen edges — an absolutely positioned box resolves against the
-     padding box, which includes that padding rather than being inset by it. */
+     .top-nav carries a transform of its own. Centred with a negative margin
+     rather than a transform, which sketch.js owns. */
   .nav-center {
+    --mobile-logo-width: 40vw;
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    padding: 0 1.25rem;
+    top: 9px;
+    left: 50%;
+    width: var(--mobile-logo-width);
+    margin-left: calc(var(--mobile-logo-width) / -2);
   }
 
   /* padding-right on desktop pulls the wordmark's own centre back to the

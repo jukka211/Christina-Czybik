@@ -299,9 +299,6 @@ const SWIPE_SETTLE_MS = 250;
 // fullscreen column with the finger, so one step is about one image-height of
 // travel instead of the much longer throw a wheel wants.
 const FULLSCREEN_COLUMN_TOUCH_PX_PER_STEP = 260;
-// How far clear of the top of the screen the logo ends up once the intro has
-// carried it out of view — see updateIntroLogo's mobile branch.
-const MOBILE_LOGO_EXIT_MARGIN_PX = 16;
 
 // Which layout is currently live; set by refreshMetrics, read all over.
 let isMobile = false;
@@ -1291,8 +1288,7 @@ function measureNavLogo() {
     left: logoRect.left,
     top: logoRect.top,
     contentWidth: logoRect.width - paddingRightPx,
-    // Mobile's motion is vertical rather than a scale, so it needs the drawn
-    // height where desktop needs the drawn width.
+    // For centring the full-width logo vertically at the start of the intro.
     height: logoRect.height,
     navInsetPx,
   };
@@ -1315,20 +1311,6 @@ function measureNavLogo() {
 // up exactly at navInsetPx regardless of scale.
 function updateIntroLogo(introProgress) {
   if (!navLogoMetrics || navLogoMetrics.contentWidth <= 0) return;
-
-  // Mobile's logo has nowhere in the nav to land — the three links fill that
-  // row at this width — so there's no scale to run and nothing to land on. It
-  // is simply as wide as the screen allows (see .nav-logo in the phone layout),
-  // starts centred on the screen, and slides up and off the top over the
-  // intro, handing the screen to the first row of photographs. Only Y is
-  // touched: the wordmark is centred by its own box, so leaving X alone is
-  // exactly what keeps it from drifting sideways on the way out.
-  if (isMobile) {
-    const centreY = window.innerHeight / 2 - navLogoMetrics.height / 2;
-    const exitY = -navLogoMetrics.height - MOBILE_LOGO_EXIT_MARGIN_PX;
-    navCenter.style.transform = `translateY(${lerp(centreY, exitY, introProgress)}px)`;
-    return;
-  }
 
   const fullWidthPx = window.innerWidth - navLogoMetrics.navInsetPx * 2;
   const fullScale = fullWidthPx / navLogoMetrics.contentWidth;
@@ -1377,7 +1359,9 @@ function updateIntroUi(introProgress) {
 // top of it, and easing here specifically is what caused the "lags behind"
 // half of the desync.
 function updateTopNav(rowZeroDistance) {
-  const travelPx = topNav.offsetHeight;
+  // Far enough to clear the logo too: on a phone it's out of the nav's flow
+  // (see .nav-center in style.css), so the nav's own height doesn't cover it.
+  const travelPx = Math.max(topNav.offsetHeight, navCenter.offsetTop + navCenter.offsetHeight);
   topNav.style.transform = `translateY(${-rowZeroDistance * travelPx}px)`;
   // The Projekte / Kategorien switch takes the logo's place: it waits
   // VIEW_SWITCH_HIDDEN_OFFSET_PX up, above the top edge, while the logo is
