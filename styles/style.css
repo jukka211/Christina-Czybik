@@ -234,9 +234,9 @@ body.is-intro .nav-center {
   will-change: transform, height;
 }
 
-/* Static label above each row's image content — category + image count,
-   both hardcoded text (see ROW_TITLES in sketch.js), not computed from the
-   row's real activeIndex/pool. A sibling of .row rather than a child of it
+/* Label under each row's image content — the row's name and a counter of
+   which photo is in the middle (see ROW_TITLES and applyLayout in
+   sketch.js). A sibling of .row rather than a child of it
    (both direct children of .sticky-viewport, same positioned ancestor, same
    top: 50% reference line .row itself uses) — living inside .row would mean
    sitting inside its overflow: hidden clip, pinned to its top edge and so
@@ -249,17 +249,19 @@ body.is-intro .nav-center {
    below). pointer-events: none so it never intercepts clicks meant for the
    row underneath.
 
-   Two pairs, set like the Info / Index buttons above them: same type, same
-   inset, and the same 204px width, "Kat.:" + category under "Info +" on the
-   left, "Ort" + count under "Index +" on the right. */
+   Three columns, set like the Info / Index buttons above them (same type,
+   same inset): "Kategorie" (or "Projekt") under "Info +", the name
+   centered on the screen, and place + count in a 204px pair under
+   "Index +". The side columns share what's left equally, so the name stays
+   centered; a name too long for the middle is cut off with an ellipsis. */
 .row-title {
   position: absolute;
   top: calc(50% + var(--stack-shift, 0px));
   left: 0;
   width: 100%;
   z-index: 2;
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr minmax(0, auto) 1fr;
   align-items: center;
   padding: 0 16px 0 15px;
   font-family: var(--font-plex-mono), monospace;
@@ -300,19 +302,29 @@ body.is-intro .row-title {
   opacity: 0;
 }
 
+.row-title-type {
+  grid-column: 1;
+  justify-self: start;
+}
+
+.row-title-cat {
+  grid-column: 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .row-title-pair {
+  grid-column: 3;
+  justify-self: end;
   width: calc(204 * var(--px));
   display: flex;
   justify-content: space-between;
 }
 
-/* Fullscreen mode's own title bar (Figma node 14:75) — a different layout
-   from .row-title above: full width edge-to-edge (same 20px/1.25rem inset
-   as the top-nav) with justify-content: space-between, rather than a
-   hug-width block centered in the middle. "Kat." and the category name sit
-   close together (8px gap) as one compact label on the left; the count
-   sits flush right. Vertically centered on the viewport (top: 50% +
-   translateY(-50%), same centering trick .row-title and .row > img use).
+/* Fullscreen mode's own title bar: the name on the left, the counter on
+   the right, in the same type and at the same inset as .row-title above.
+   Vertically centered on the viewport (top: 50% + translateY(-50%), same
+   centering trick .row-title and .row > img use).
 
    Always in the layout (display: flex, not display: none) so its opacity
    transition actually has something to animate — hidden by default via
@@ -329,11 +341,15 @@ body.is-intro .row-title {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 2px 1.25rem;
+  gap: 16px;
+  padding: 0 16px 0 15px;
   font-family: var(--font-plex-mono), monospace;
   font-weight: 400;
   font-size: calc(13 * var(--px));
-  letter-spacing: 0.25em;
+  line-height: calc(14.3 * var(--px));
+  letter-spacing: 0;
+  text-transform: uppercase;
+  white-space: nowrap;
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.4s ease;
@@ -341,12 +357,6 @@ body.is-intro .row-title {
 
 .fullscreen-title.is-visible {
   opacity: 1;
-}
-
-.fullscreen-title-label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
 }
 
 /* Adds a transition just for entering/exiting fullscreen — sketch.js toggles
@@ -547,8 +557,12 @@ body.is-intro .row-title {
     touch-action: pinch-zoom;
   }
 
-  /* No room for two 204px pairs on a phone: "Kat.:" + category on the
-     left and the count on the right. */
+  /* No room for the label or the 204px pair on a phone: just the name,
+     centered, and the count on the right. */
+  .row-title-type {
+    display: none;
+  }
+
   .row-title-pair {
     width: auto;
     gap: 8px;

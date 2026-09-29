@@ -200,17 +200,13 @@ export default async function HomePage() {
         </div>
       </div>
 
-      {/* Fullscreen mode's own title bar (see Figma node 14:75) — category
-          (left) + count (right), vertically centered on the screen. One
-          shared element, not one per row, since only one row is ever
-          fullscreen at a time; sketch.js's update() fills in whichever row's
-          ROW_TITLES entry is currently fullscreen and fades this in/out via
-          .is-visible. */}
+      {/* Fullscreen mode's own title bar — the name (left) + counter
+          (right), vertically centered on the screen. One shared element, not
+          one per row, since only one row is ever fullscreen at a time;
+          sketch.js fills in whichever row (or project) is fullscreen and
+          fades this in/out via .is-visible. */}
       <div className="fullscreen-title" id="fullscreenTitle">
-        <span className="fullscreen-title-label">
-          <span id="fullscreenTitleType" />
-          <span id="fullscreenTitleCat" />
-        </span>
+        <span id="fullscreenTitleName" />
         <span id="fullscreenTitleCount" />
       </div>
 
