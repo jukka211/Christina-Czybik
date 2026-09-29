@@ -413,6 +413,42 @@ body.is-intro .row-title {
   background-color: #f7f7f7;
 }
 
+/* Desktop's counterpart: with the pointer over a row's left or right step
+   zone (the arrow cursors, see the mousemove handler in sketch.js), that
+   half of the row tints, behind its photos (a ::before paints under the
+   row's own images). Not over the middle band that opens fullscreen, not in
+   fullscreen, and not behind the panels. */
+.row::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  background-color: #f5f5f5;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+@media (hover: hover) and (min-width: 769px) {
+  .row.is-hover-left::before,
+  .row.is-hover-right::before {
+    visibility: visible;
+  }
+
+  .row.is-hover-left::before {
+    left: 0;
+  }
+
+  .row.is-hover-right::before {
+    left: 50%;
+  }
+
+  .row.is-fullscreen::before,
+  body.panels-open .row::before {
+    visibility: hidden;
+  }
+}
+
 /* Base position only — width, height, and transform (translate, to offset
    from this centered base point) are all set inline per image by
    sketch.js whenever activeIndex changes; no transition here by default,
