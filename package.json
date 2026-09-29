@@ -1,0 +1,29 @@
+{
+  "name": "christina-czybik",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "import-legacy": "node --env-file=.env.local scripts/import-legacy.mjs"
+  },
+  "dependencies": {
+    "@sanity/orderable-document-list": "^2.0.25",
+    "next": "^16.3.7",
+    "next-sanity": "^13.3.4",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "sanity": "^6.17.0",
+    "styled-components": "^6.5.3"
+  },
+  "devDependencies": {
+    "@sanity/client": "^8.9.0",
+    "@types/node": "^26.6.3",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "lexorank": "^1.0.5",
+    "typescript": "^7.0.2"
+  }
+}
