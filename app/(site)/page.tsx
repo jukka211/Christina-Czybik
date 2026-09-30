@@ -19,7 +19,11 @@ export default async function HomePage() {
     <>
       <nav className="top-nav top-nav--solo" id="topNav">
         <div className="nav-block nav-center">
-          <Logo />
+          {/* Back to the start: a fresh load of the page, intro and all,
+              without any panel the address had open. */}
+          <a href="/" className="nav-logo-link">
+            <Logo />
+          </a>
         </div>
       </nav>
 

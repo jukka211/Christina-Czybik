@@ -40,10 +40,22 @@
   padding-right: 0;
 }
 
-/* The nav's own box spans the screen, so only the white behind the logo
-   takes clicks. */
+/* The nav's own box spans the screen, so only the white behind the logo,
+   and the logo itself, take clicks. */
 .top-nav--solo {
   pointer-events: none;
+}
+
+/* The logo's link back to the start (page.tsx), laid out as the logo alone
+   would be. Clickable once it's small in the nav: not while it's blown up
+   over the intro, nor while the nav is faded out (fullscreen, or a panel
+   open). */
+.nav-logo-link {
+  display: block;
+}
+
+body:not(.panels-open):not(.is-intro) .top-nav--solo:not(.nav-hidden) .nav-logo-link {
+  pointer-events: auto;
 }
 
 /* White behind the logo, full width, from the top of the screen to where
