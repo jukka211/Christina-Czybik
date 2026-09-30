@@ -16,18 +16,19 @@
   /* The site's type unit: every font-size and px line-height (and the few
      sizes that follow the type, like the Info / Index buttons) is written as
      calc(N * var(--px)). On desktop it scales with the screen width below a
-     MacBook Air 15" (1710px wide, where 1 --px is 0.8925px: the type runs
-     ~11% under the design's sizes), so the type keeps its proportion to the
+     MacBook Air 15" (1710px wide, where 1 --px is 0.9818px: the type runs
+     ~2% under the design's sizes), so the type keeps its proportion to the
      layout on a smaller laptop, and never gets unreadably small. It stops
      growing there: a desktop display (a 27" at 2560px wide) already draws
      each px physically larger and is read from further away, so the 15"
-     size is the right size there too. Phones keep plain px. */
-  --px: 1px;
+     size is the right size there too. Phones run 10% over the design's
+     sizes, at a fixed 1.1px. */
+  --px: 1.1px;
 }
 
 @media (min-width: 769px) {
   :root {
-    --px: clamp(0.714px, calc(100vw / 1710 * 0.8925), 0.8925px);
+    --px: clamp(0.7854px, calc(100vw / 1710 * 0.9818), 0.9818px);
   }
 }
 
