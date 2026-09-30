@@ -116,8 +116,7 @@ export default async function HomePage() {
               BMWK/BMWE,
               <br />
               AA,&nbsp;BMWSB,
-              <br />
-              bpb,
+          
               <br />
               BMI,
               <br />
@@ -144,8 +143,6 @@ export default async function HomePage() {
               Hermes,
               <br />
               Cargill,
-              <br />
-              ECE,
               <br />
               Zeppelin,
               <br />
