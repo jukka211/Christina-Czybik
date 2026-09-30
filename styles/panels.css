@@ -34,9 +34,9 @@
 }
 
 /* --logo-width: on desktop sketch.js sizes the logo from the small rows'
-   photos (see LOGO_TO_PHOTO_HEIGHT); 12.74vw until it has. */
+   photos (see LOGO_TO_PHOTO_HEIGHT); 14vw until it has. */
 .top-nav--solo .nav-logo {
-  width: var(--logo-width, 12.74vw);
+  width: var(--logo-width, 14vw);
   padding-right: 0;
 }
 
