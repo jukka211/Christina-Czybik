@@ -29,8 +29,8 @@ export default async function HomePage() {
 
       {/* Info / Index — two independent switches (see panels.js). Kept
           outside .top-nav so they stay put while the logo runs its
-          intro/scroll motion and slides away; the Index panel opens in the
-          top half of the screen, the Info panel in the bottom half, and
+          intro/scroll motion and slides away; the Info panel opens in the
+          top half of the screen, the Index panel in the bottom half, and
           either or both can be open. */}
       <div className="panel-nav" id="panelNav">
         <button type="button" className="panel-toggle" data-panel="info" aria-controls="infoPanel" aria-expanded="false">

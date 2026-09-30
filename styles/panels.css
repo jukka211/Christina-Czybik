@@ -306,23 +306,21 @@ html.panels-open {
   color: var(--panel-muted);
 }
 
-/* Index: top half, starting under the buttons. As tall as its table, up
-   to the screen's midline, so the Info panel can use whatever it leaves. */
-.panel-index {
+/* Info: top half, starting under the buttons. As tall as its content, up
+   to 24px short of the screen's midline, where the Index panel starts. */
+.panel-info {
   top: var(--panel-nav-bottom);
-  max-height: calc(50% - var(--panel-nav-bottom));
+  max-height: calc(50% - var(--panel-nav-bottom) - 24px);
   padding-top: 26px;
 }
 
-/* Info: ends 24px above the gallery's bottom row (sketch.js publishes where
-   that row starts as --stack-bottom-row-top), so the project previews from
-   the Index never run under its text. It grows upward from there to 24px
-   short of whatever is above it, the end of the Index table or the buttons
-   (--panel-info-ceiling, set by panels.js), and scrolls past that. */
-.panel-info {
-  --panel-info-bottom: calc(var(--stack-bottom-row-top, 73px) + 24px);
-  bottom: var(--panel-info-bottom);
-  max-height: calc(100% - var(--panel-info-bottom) - var(--panel-info-ceiling, 50%) - 24px);
+/* Index: starts at the screen's midline and runs down to 24px above the
+   gallery's bottom row (sketch.js publishes where that row starts as
+   --stack-bottom-row-top), so the project previews from its rows never run
+   under its text. It scrolls past that. */
+.panel-index {
+  top: 50%;
+  max-height: calc(50% - var(--stack-bottom-row-top, 73px) - 24px);
 }
 
 /* --- Index table --------------------------------------------------------
@@ -486,8 +484,8 @@ html.panels-open {
 
   /* One panel at a time on a phone (panels.js), each filling the screen
      below the buttons and scrolling on its own. */
-  .panel-index,
-  .panel-info {
+  .panel-info,
+  .panel-index {
     top: var(--panel-nav-bottom);
     bottom: 0;
     max-height: none;
