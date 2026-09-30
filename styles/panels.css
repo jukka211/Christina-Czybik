@@ -22,21 +22,50 @@
   justify-content: center;
 }
 
-/* The logo's resting (small) position lines up with the top of the Info /
-   Index buttons (9px). The Projekte / Kategorien switch that shares the
-   middle waits above the screen until the logo has slid out (see
-   updateTopNav in sketch.js). The intro scales the logo from its own
-   top-left corner, so it lands here too. Desktop only: the phone logo is
-   positioned on its own (see style.css). */
+/* The logo's resting (small) position: on the Info / Index buttons' line
+   (9px, like .panel-nav), where it comes back to whenever you scroll up (see
+   updateTopNav and slideLogo in sketch.js). The intro scales the logo from
+   its own top-left corner, so it lands here too. Desktop only: the phone
+   logo is positioned on its own (see style.css). */
 @media (min-width: 769px) {
   .top-nav--solo {
     padding-top: 9px;
   }
 }
 
+/* --logo-width: on desktop sketch.js sizes the logo from the small rows'
+   photos (see LOGO_TO_PHOTO_HEIGHT); 12.74vw until it has. */
 .top-nav--solo .nav-logo {
-  width: 12.74vw;
+  width: var(--logo-width, 12.74vw);
   padding-right: 0;
+}
+
+/* The nav's own box spans the screen, so only the white behind the logo
+   takes clicks. */
+.top-nav--solo {
+  pointer-events: none;
+}
+
+/* White behind the logo, full width, from the top of the screen to where
+   the gallery starts while the logo is in place (sketch.js measures it, see
+   measureNavLogo). The gallery never sits under it, but rows scrolling out
+   over its top edge pass behind it. z-index -1 keeps it under the logo,
+   which is a later sibling in the nav's own stacking context. */
+.top-nav--solo::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: var(--logo-backdrop-height, 0px);
+  z-index: -1;
+  background: var(--bg);
+}
+
+/* Not while the nav is faded out (fullscreen, or a panel open), when there's
+   nothing there to click. */
+body:not(.panels-open) .top-nav--solo:not(.nav-hidden)::before {
+  pointer-events: auto;
 }
 
 /* --- Info / Index buttons -----------------------------------------------
@@ -122,6 +151,11 @@
   font: inherit;
   cursor: default;
   pointer-events: auto;
+}
+
+/* Hidden for now (test): the gallery stays on DEFAULT_VIEW. */
+.view-switch {
+  display: none;
 }
 
 .view-switch-option:not(.is-active) {

@@ -9,11 +9,10 @@ body {
   width: 100%;
 }
 
-/* transform is set every scroll frame by updateTopNav() in sketch.js — no
-   transition on it (see that function for why: it already runs in lockstep
-   with the row stack's own per-frame, transition-free movement, so easing
-   here would only put it out of sync again). opacity is the one property
-   that still transitions, for the separate fullscreen fade below. */
+/* Slides away on the way down the page and back on the way up once the
+   intro is over: sketch.js sets its transform frame by frame (see
+   slideLogo), so no transition on that. opacity transitions, for the
+   fullscreen fade below. */
 .top-nav {
   position: fixed;
   top: 0;
@@ -149,7 +148,6 @@ body.is-intro .nav-center {
   width: 100%;
   z-index: 100;
   padding: 24px 11px 13px;
-  background: var(--bg);
   font-family: var(--font-plex-mono), monospace;
   font-weight: 400;
   font-size: calc(13 * var(--px));
@@ -709,7 +707,8 @@ body.is-intro .row-title {
      their line (9px, like .panel-nav), centred and --mobile-logo-width wide.
      The intro runs the same as on desktop (updateIntroLogo in sketch.js):
      it starts full width in the middle of the screen and shrinks up into
-     this spot, then slides out with the nav as you scroll on (updateTopNav).
+     this spot, and slides out on the way down the page and back in on the
+     way up (updateTopNav).
 
      Absolutely positioned against .top-nav rather than fixed: a fixed child
      of a transformed ancestor is positioned against that ancestor anyway, and

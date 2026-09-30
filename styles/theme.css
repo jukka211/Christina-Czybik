@@ -3,8 +3,8 @@
    are the only two variables the rest of the site's CSS needs to reference,
    so anything using a literal #fff/#000 instead (e.g. an element that needs
    an opaque background over scrolling content) won't follow them — see
-   #bottomFooter and .top-nav in the per-page stylesheets, which use these
-   variables for exactly that reason.
+   the white behind the logo (.top-nav--solo::before in panels.css), which
+   uses --bg for exactly that reason.
 
    These were a switchable pair until the b/w mode switch was removed: a
    `body.theme-black { --bg: #000; --fg: #fff; }` rule, flipped by a control
