@@ -97,11 +97,11 @@ export default async function HomePage() {
               <a href="https://www.instagram.com/christinaczybik/" target="_blank" rel="noopener">
                 @christinaczybik
               </a>
-            </p>
-            <p className="info-legal">
+              <p className="info-legal">
               <a href="/impressum">
-                Impressum <br /> &amp; Datenschutz
+                Impressum  &amp; <br /> Datenschutz
               </a>
+            </p>
             </p>
           </div>
           <div className="info-col info-col-clients">
