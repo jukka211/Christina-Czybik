@@ -436,6 +436,7 @@ html.panels-open {
   margin: 0;
   padding-top: calc(14 * var(--px));
   line-height: calc(14.3 * var(--px));
+  text-transform: uppercase;
 }
 
 /* 11.4vw is 195px (170px + 15%) on the 1710px-wide MacBook Air the type

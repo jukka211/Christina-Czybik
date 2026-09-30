@@ -195,6 +195,7 @@ body.is-intro .nav-center {
   position: absolute;
   right: 11px;
   bottom: 13px;
+  text-transform: uppercase;
 }
 /* Tall scroll spacer — its length is how far you scroll to move through all
    rows. 980vh is the height for five rows plus the intro; sketch.js
