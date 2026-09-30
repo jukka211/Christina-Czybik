@@ -12,6 +12,7 @@ const plexMono = IBM_Plex_Mono({
 
 export const metadata: Metadata = {
   title: 'Christina Czybik',
+  icons: { icon: '/favicon.svg' },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
