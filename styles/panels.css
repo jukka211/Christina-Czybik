@@ -431,15 +431,9 @@ html.panels-open {
   line-height: calc(14 * var(--px));
 }
 
-/* Impressum link at the foot of the Kontakt column: the column stretches to
-   the grid row's height (set by the longest column), and the link is pushed
-   to its bottom. */
-.info-col-contact {
-  align-self: stretch;
-}
-
+/* Impressum link right under the contact details in the Kontakt column. */
 .info-legal {
-  margin: auto 0 0;
+  margin: 0;
   padding-top: calc(14 * var(--px));
   line-height: calc(14.3 * var(--px));
 }
