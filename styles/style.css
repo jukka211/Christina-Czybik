@@ -582,15 +582,15 @@ body.is-intro .row-title {
    row's own images. What's left for CSS is the part only CSS can say: which
    gestures the browser is allowed to keep for itself. */
 @media (max-width: 768px) {
-  /* The gallery starts under the top bar rather than at the top of the
-     screen, so no photo ever passes under the buttons or the logo: below
-     the logo (its top, 9px, plus its height at --mobile-logo-width wide,
-     from its 340.5 x 100.2 viewBox) and the 9px of white the nav keeps
-     under it (LOGO_PADDING_BOTTOM_PX in sketch.js). Everything in the
-     gallery is sized from what's left below (--vh, 1% of that, theme.css). */
+  /* The gallery starts under the Info / Index buttons rather than at the
+     top of the screen, so no photo ever passes under them, and everything
+     in it is sized from what's left below (--vh, 1% of that, theme.css).
+     The logo, which reaches a little lower, moves the stack down by half
+     the difference while it's in view (see refreshStackFrame in
+     sketch.js). */
   :root {
     --mobile-logo-width: 40vw;
-    --gallery-top: calc(9px + var(--mobile-logo-width) * 100.2 / 340.5 + 9px);
+    --gallery-top: var(--panel-nav-bottom);
     --vh: calc((100vh - var(--gallery-top)) / 100);
   }
 

@@ -26,7 +26,7 @@
   --px: calc(13.5px / 13);
   /* The gallery's height unit, written as calc(N * var(--vh)) where vh
      would be: 1vh, the screen's full height, here; on a phone, 1% of the
-     screen below the buttons and the logo, where the gallery starts (see
+     screen below the Info / Index buttons, where the gallery starts (see
      --gallery-top in style.css). */
   --vh: 1vh;
 }
