@@ -4,6 +4,7 @@ import '@/styles/legal.css'
 import type { Metadata } from 'next'
 
 import { LegalBack } from '@/components/LegalBack'
+import { EMAIL, MAILTO } from '@/lib/contact'
 import { type Photo, sanityImageUrl } from '@/lib/sanity-image'
 import { getSiteData } from '@/sanity/fetch'
 
@@ -78,7 +79,7 @@ export default async function LegalPage() {
               22419 Hamburg</p>
             <p>Kontakt:<br />
               Telefon: <a href="tel:+491724040642">+491724040642</a><br />
-              E-Mail: <a href="mailto:request@christinaczybik.com">request@christinaczybik.com</a></p>
+              E-Mail: <a href={MAILTO}>{EMAIL}</a></p>
             <p>Umsatzsteuer-ID gemäß §27 a Umsatzsteuergesetz: DE297486546</p>
             <p>Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV:<br />
               Christina Czybik</p>

@@ -4,6 +4,7 @@ import '@/styles/intro.css'
 
 import { Gallery } from '@/components/Gallery'
 import { Logo } from '@/components/Logo'
+import { EMAIL, MAILTO } from '@/lib/contact'
 import { getSiteData } from '@/sanity/fetch'
 
 // What's published in the Studio shows here within a minute.
@@ -96,7 +97,7 @@ export default async function HomePage() {
             <p className="info-upper">
               Tel.: <a href="tel:+491724040642">0049 (0) 1724040642</a>
               <br />
-              E-Mail: <a href="mailto:request@christinaczybik.com">request@christinaczybik.com</a>
+              E-Mail: <a href={MAILTO}>{EMAIL}</a>
               <br />
               Instagram:{' '}
               <a href="https://www.instagram.com/christinaczybik/" target="_blank" rel="noopener">
@@ -241,7 +242,7 @@ export default async function HomePage() {
             <p>
               Tel.: <a href="tel:+491724040642">0049 (0) 1724040642</a>
               <br />
-              E-Mail: <a href="mailto:request@christinaczybik.com">request@christinaczybik.com</a>
+              E-Mail: <a href={MAILTO}>{EMAIL}</a>
               <br />
               Instagram:{' '}
               <a href="https://www.instagram.com/christinaczybik/" target="_blank" rel="noopener">
