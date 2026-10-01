@@ -6,7 +6,7 @@
    the middle of their box, as in the design. The trailing * 0.85 shrinks
    them 15% from that fit. */
 .intro-grid {
-  --intro-cell-h: calc(min(7.81vw, calc((100 * var(--vh) - 55px) / var(--intro-rows) - 10px)) * 0.85);
+  --intro-cell-h: calc(min(7.81vw, calc((100vh - 55px) / var(--intro-rows) - 10px)) * 0.85);
   --intro-cell-w: calc(var(--intro-cell-h) * 2 / 3);
   position: fixed;
   top: calc(var(--panel-nav-bottom) + 7px);
@@ -76,7 +76,7 @@ body.is-intro-grid .sticky-viewport {
    37% from that fit, still spread edge to edge by space-between. */
 @media (max-width: 768px) {
   .intro-grid {
-    --intro-cell-w: calc(min(13.6vw, calc(((100 * var(--vh) - 55px) / var(--intro-rows) - 10px) * 2 / 3 * 0.85)) * 0.63);
+    --intro-cell-w: calc(min(13.6vw, calc(((100vh - 55px) / var(--intro-rows) - 10px) * 2 / 3 * 0.85)) * 0.63);
     --intro-cell-h: calc(var(--intro-cell-w) * 3 / 2);
     right: 10px;
     left: 10px;

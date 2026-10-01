@@ -582,6 +582,40 @@ body.is-intro .row-title {
    row's own images. What's left for CSS is the part only CSS can say: which
    gestures the browser is allowed to keep for itself. */
 @media (max-width: 768px) {
+  /* The gallery starts under the Info / Index buttons rather than at the
+     top of the screen, so no photo ever passes under them: it holds still
+     there, and everything in it is sized from what's left below (--vh,
+     1% of that, theme.css). */
+  :root {
+    --gallery-top: var(--panel-nav-bottom);
+    --vh: calc((100vh - var(--gallery-top)) / 100);
+  }
+
+  .sticky-viewport {
+    top: var(--gallery-top);
+  }
+
+  /* The browser's own scroll snapping lands the page on a row, with the
+     phone's momentum, once the intro is over (sketch.js adds .snap-rows
+     then, see updateSnapPoints): one point per row where it rests open,
+     and the footer's end, so the page can still get down to it. */
+  html.snap-rows {
+    scroll-snap-type: y mandatory;
+  }
+
+  .row-snap {
+    position: absolute;
+    left: 0;
+    width: 1px;
+    height: 1px;
+    pointer-events: none;
+    scroll-snap-align: start;
+  }
+
+  html.snap-rows #bottomFooter {
+    scroll-snap-align: end;
+  }
+
   /* pan-y hands vertical drags straight to the page's own scrolling while
      reserving horizontal ones for the swipe handler in sketch.js — which is
      exactly what lets that handler preventDefault a swipe without wrestling
