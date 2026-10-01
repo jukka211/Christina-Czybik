@@ -21,9 +21,9 @@
      layout on a smaller laptop, and never gets unreadably small. It stops
      growing there: a desktop display (a 27" at 2560px wide) already draws
      each px physically larger and is read from further away, so the 15"
-     size is the right size there too. Phones run 10% over the design's
-     sizes, at a fixed 1.1px. */
-  --px: 1.1px;
+     size is the right size there too. Phones run ~4% over the design's
+     sizes, at a fixed 1/13 of 13.5px: the 13px type comes out 13.5px. */
+  --px: calc(13.5px / 13);
   /* The gallery's height unit, written as calc(N * var(--vh)) where vh
      would be: 1vh, the screen's full height, here; on a phone, 1% of the
      screen below the buttons and the logo, where the gallery starts (see
