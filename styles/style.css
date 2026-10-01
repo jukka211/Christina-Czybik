@@ -198,18 +198,18 @@ body.is-intro .nav-center {
   text-transform: uppercase;
 }
 /* Tall scroll spacer — its length is how far you scroll to move through all
-   rows. 980vh is the height for five rows plus the intro; sketch.js
+   rows. 980 --vh is the height for five rows plus the intro; sketch.js
    (setStackHeight) resizes it for however many rows the current view has,
    keeping the same scroll distance per row. */
 .stack-wrapper {
   position: relative;
-  height: 980vh;
+  height: calc(980 * var(--vh));
 }
 
 .sticky-viewport {
   position: sticky;
   top: 0;
-  height: 100vh;
+  height: calc(100 * var(--vh));
   width: 100%;
   overflow: hidden;
 }
@@ -517,7 +517,7 @@ body.is-intro .row-title {
    update()), at which point it covers the (also hidden then) stack images
    above.
 
-   height: 100vh + position: absolute + top: 50% + translateY(-50%) (same
+   Full height + position: absolute + top: 50% + translateY(-50%) (same
    centering as .row itself) keeps this always centered on the same point
    .row grows from, so .row's overflow: hidden clipping it down to .row's
    current (smaller, animating) height reads as a symmetric reveal from the
@@ -528,7 +528,7 @@ body.is-intro .row-title {
   top: 50%;
   left: 0;
   transform: translateY(-50%);
-  height: 100vh;
+  height: calc(100 * var(--vh));
   width: 100%;
 }
 

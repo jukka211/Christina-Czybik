@@ -24,6 +24,20 @@
      size is the right size there too. Phones run 10% over the design's
      sizes, at a fixed 1.1px. */
   --px: 1.1px;
+  /* The gallery's height unit, 1% of the screen's height with a phone
+     browser's bars showing: written as calc(N * var(--vh)) where vh would
+     be. Phone browsers count vh with their bars hidden, so anything sized
+     in vh runs under them while they show. svh is the height with them
+     showing; where it isn't supported (iOS before 15.4), sketch.js measures
+     the same thing and sets --vh in px (see measureViewportHeight). On a
+     desktop all three are the same. */
+  --vh: 1vh;
+}
+
+@supports (height: 1svh) {
+  :root {
+    --vh: 1svh;
+  }
 }
 
 @media (min-width: 769px) {

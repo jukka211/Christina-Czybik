@@ -82,8 +82,8 @@ body:not(.panels-open) .top-nav--solo:not(.nav-hidden)::before {
 
 /* --- Info / Index buttons -----------------------------------------------
    Figma 33:1316. Three columns: Info on the left, the middle slot centered
-   on the screen (not merely between two differently wide buttons), Index
-   on the right. */
+   on the screen (not merely between two differently wide buttons), the
+   Kategorien / Projekte switch and Index on the right. */
 .panel-nav {
   position: fixed;
   top: 9px;
@@ -102,15 +102,16 @@ body:not(.panels-open) .top-nav--solo:not(.nav-hidden)::before {
   justify-self: start;
 }
 
-.panel-toggle[data-panel="index"] {
+.panel-nav-right {
   justify-self: end;
+  display: flex;
+  align-items: start;
+  gap: 8px;
 }
 
-/* Each button (and each half of the Projekte / Kategorien switch) is a
-   small tab as wide as its text: 4px padding, a 1px line along the top,
-   light gray fill. */
-.panel-toggle,
-.view-switch-option {
+/* Each button is a small tab as wide as its text: 4px padding, a 1px line
+   along the top, light gray fill. */
+.panel-toggle {
   display: flex;
   align-items: center;
   gap: 1ch;
@@ -138,66 +139,43 @@ body:not(.panels-open) .top-nav--solo:not(.nav-hidden)::before {
   pointer-events: none;
 }
 
-/* The middle slot. It holds the Projekte / Kategorien switch and "Back"
-   stacked in one grid cell, and shows one at a time: the switch on the
-   gallery, "Back" while a panel is open. Hidden rather than removed, so
-   nothing shifts when they trade places. */
+/* The middle slot, under the logo: "Back", shown only while a panel is
+   open. */
 .panel-nav-center {
   display: grid;
   justify-items: center;
 }
 
-.panel-nav-center > * {
-  grid-area: 1 / 1;
+/* The Kategorien / Projekte switch: a tab like the others, with the filter
+   icon (public/filter.svg, as a mask so it takes the text color) before the
+   view showing. The label keeps the longer name's width, so the tab doesn't
+   change size between the two, and centers the shorter one in it: a space
+   either side of "Projekte" in the monospaced type. */
+.view-switch-icon {
+  flex: none;
+  width: calc(12 * var(--px));
+  height: calc(8 * var(--px));
+  background: currentColor;
+  mask: url("/filter.svg") center / contain no-repeat;
+  transition: transform 0.3s ease;
 }
 
-/* Two tabs 4px apart, the selected one gray, the other white. Clicking
-   the other tab switches the gallery's rows between the categories' best-of
-   and the projects (see setView in sketch.js). */
-.view-switch {
-  display: flex;
-  gap: 4px;
-  padding: 0;
-  border: 0;
-  background: none;
-  font: inherit;
-  cursor: default;
-  pointer-events: auto;
+/* Upside down on Projekte, turning over at each switch. */
+.view-switch[data-view="projekte"] .view-switch-icon {
+  transform: rotate(180deg);
 }
 
-/* Hidden for now (test): the gallery stays on DEFAULT_VIEW. */
-.view-switch {
-  display: none;
+.view-switch-label {
+  min-width: 10ch;
+  text-align: center;
 }
 
-.view-switch-option:not(.is-active) {
-  cursor: pointer;
-}
-
-.view-switch-option {
-  background: #fff;
-}
-
-.view-switch-option.is-active {
-  background: #f0f0f0;
-}
-
-/* Hover swaps each tab's fill: gray ones turn white, white ones gray. Only
-   where there's a real pointer, so a tap on a phone doesn't leave a tab
-   stuck in its hover color. */
+/* Hover turns the gray fill white. Only where there's a real pointer, so a
+   tap on a phone doesn't leave a tab stuck in its hover color. */
 @media (hover: hover) {
-  .panel-toggle:hover,
-  .view-switch-option.is-active:hover {
+  .panel-toggle:hover {
     background: #fff;
   }
-
-  .view-switch-option:not(.is-active):hover {
-    background: #f0f0f0;
-  }
-}
-
-.panel-nav.nav-hidden .view-switch {
-  pointer-events: none;
 }
 
 body:not(.panels-open) .panel-back,
@@ -382,7 +360,7 @@ html.panels-open {
   gap: 3px;
 }
 
-/* Clicking a row opens the project in fullscreen (panels.js). */
+/* Clicking a row shows the project on the gallery (panels.js). */
 .index-body .index-row {
   cursor: pointer;
 }
@@ -480,6 +458,17 @@ html.panels-open {
   .col-year {
     grid-column: 2;
     padding-left: 1em;
+  }
+
+  /* No room for the Kategorien / Projekte switch beside Index, so it takes
+     the middle of the buttons' line, which is the logo's: it waits above the
+     screen while the logo is in place and slides down as the logo slides up
+     out of view (--logo-reveal, 1 to 0, set by sketch.js). */
+  .view-switch {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translate(-50%, calc((-100% - 15px) * var(--logo-reveal, 1)));
   }
 
   /* One panel at a time on a phone (panels.js), each filling the screen

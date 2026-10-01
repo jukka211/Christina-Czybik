@@ -37,28 +37,33 @@ export default async function HomePage() {
           <span>Info</span>
           <span className="panel-toggle-sign">+</span>
         </button>
-        {/* The middle slot: the Projekte / Kategorien switch (Figma
-            33:1316) on the gallery, "Back" while a panel is open (closes
-            both, see panels.js). The switch picks what the gallery's rows
-            are (see setView in sketch.js); it opens on Kategorien (see
-            DEFAULT_VIEW in lib/gallery/index.js). */}
+        {/* The middle slot, under the logo: "Back" while a panel is open
+            (closes both, see panels.js). */}
         <div className="panel-nav-center">
-          <button type="button" className="view-switch" id="viewSwitch">
-            <span className="view-switch-option" data-view="projekte">
-              Projekte
-            </span>
-            <span className="view-switch-option is-active" data-view="kategorien">
-              Kategorien
-            </span>
-          </button>
           <button type="button" className="panel-toggle panel-back" id="panelBack">
             Back
           </button>
         </div>
-        <button type="button" className="panel-toggle" data-panel="index" aria-controls="indexPanel" aria-expanded="false">
-          <span>Index</span>
-          <span className="panel-toggle-sign">+</span>
-        </button>
+        <div className="panel-nav-right">
+          {/* The Kategorien / Projekte switch: what the gallery's rows are.
+              It names the view showing, and a click changes to the other
+              one (see setView and markActiveView in sketch.js). It opens on
+              Kategorien (see DEFAULT_VIEW in lib/gallery/index.js). */}
+          <button
+            type="button"
+            className="panel-toggle view-switch"
+            id="viewSwitch"
+            data-view="kategorien"
+            aria-label="Ansicht wechseln: Projekte"
+          >
+            <span className="view-switch-icon" aria-hidden="true" />
+            <span className="view-switch-label">Kategorien</span>
+          </button>
+          <button type="button" className="panel-toggle" data-panel="index" aria-controls="indexPanel" aria-expanded="false">
+            <span>Index</span>
+            <span className="panel-toggle-sign">+</span>
+          </button>
+        </div>
       </div>
 
       <section className="panel panel-index" id="indexPanel" data-panel="index" aria-label="Index">
