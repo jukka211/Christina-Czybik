@@ -53,3 +53,11 @@ body {
 .is-inactive {
   opacity: 0.35;
 }
+
+/* Photos can't be dragged out of the page, and a long press on a phone
+   doesn't offer to save them (see ProtectImages for the right click). */
+img {
+  -webkit-user-drag: none;
+  user-drag: none;
+  -webkit-touch-callout: none;
+}

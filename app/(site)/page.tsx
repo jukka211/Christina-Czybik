@@ -96,7 +96,7 @@ export default async function HomePage() {
             <p className="info-upper">
               Tel.: <a href="tel:+491724040642">0049 (0) 1724040642</a>
               <br />
-              E-Mail: <a href="mailto:christina@christinaczybik.com">christina@christinaczybik.com</a>
+              E-Mail: <a href="mailto:request@christinaczybik.com">request@christinaczybik.com</a>
               <br />
               Instagram:{' '}
               <a href="https://www.instagram.com/christinaczybik/" target="_blank" rel="noopener">
@@ -170,7 +170,7 @@ export default async function HomePage() {
             <h2 className="panel-label">Bio</h2>
             <div className="info-bio">
               <p>
-                Ich bin freiberufliche Fotojournalistin aus Hamburg mit 25 Jahren Erfahrung in den Bereichen Politik,
+                Ich bin freiberufliche Fotografin aus Hamburg mit 25 Jahren Erfahrung in den Bereichen Politik,
                 Event, Reportage und Zeitgeschehen. Meine Schwerpunkte sind die dokumentarische Fotografie,
                 Pressefotografie, Eventdokumentationen für Unternehmen und Verbände sowie die politische Kommunikation.
                 <br />
@@ -241,7 +241,7 @@ export default async function HomePage() {
             <p>
               Tel.: <a href="tel:+491724040642">0049 (0) 1724040642</a>
               <br />
-              E-Mail: <a href="mailto:christina@christinaczybik.com">christina@christinaczybik.com</a>
+              E-Mail: <a href="mailto:request@christinaczybik.com">request@christinaczybik.com</a>
               <br />
               Instagram:{' '}
               <a href="https://www.instagram.com/christinaczybik/" target="_blank" rel="noopener">

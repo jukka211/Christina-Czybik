@@ -138,3 +138,13 @@ body:has(.legal-page) {
     gap: 8px;
   }
 }
+
+/* Phone and e-mail in the Impressum, set like the links in the Info panel. */
+.legal-text a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.legal-text a:hover {
+  text-decoration: underline;
+}

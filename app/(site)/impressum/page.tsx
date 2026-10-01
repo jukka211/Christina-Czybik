@@ -59,26 +59,29 @@ export default async function LegalPage() {
         <div className="panel-nav-center">
           <LegalBack />
         </div>
-        <a className="panel-toggle" data-panel="index" href="/#index">
-          <span>Index</span>
-          <span>+</span>
-        </a>
+        <div className="panel-nav-right">
+          <a className="panel-toggle" data-panel="index" href="/#index">
+            <span>Index</span>
+            <span>+</span>
+          </a>
+        </div>
       </nav>
 
       <main className="legal-main">
         <section className="legal-imprint" aria-labelledby="imprintTitle">
           <h2 className="legal-label" id="imprintTitle">Impressum</h2>
           <div className="legal-text">
-            <p>Czybik &amp; Schmid Media UG (haftungsbeschränkt) i.G.<br />
-              Vertreten durch Laurin Schmid<br />
-              Kollwitzstr. 76<br />
-              10435 Berlin<br />
-              Telefon: +49 30 81456619<br />
-              E-Mail: redaktion@czybik-schmid-media.de</p>
-            <p>Verantwortlich für den Inhalt<br />
-              Laurin Schmid<br />
-              Kollwitzstr. 76<br />
-              10435 Berlin</p>
+            <p>Angaben gemäß § 5 TMG:</p>
+            <p>Christina Czybik<br />
+              Fotojournalistin und Fotoredakteurin<br />
+              Ochsenweberstraße 19<br />
+              22419 Hamburg</p>
+            <p>Kontakt:<br />
+              Telefon: <a href="tel:+491724040642">+491724040642</a><br />
+              E-Mail: <a href="mailto:request@christinaczybik.com">request@christinaczybik.com</a></p>
+            <p>Umsatzsteuer-ID gemäß §27 a Umsatzsteuergesetz: DE297486546</p>
+            <p>Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV:<br />
+              Christina Czybik</p>
           </div>
         </section>
 
