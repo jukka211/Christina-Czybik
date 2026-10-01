@@ -445,6 +445,12 @@ html.panels-open {
     width: 100%;
   }
 
+  /* The buttons 10px in from the screen's edges, like the photos. */
+  .panel-nav {
+    left: 10px;
+    right: 10px;
+  }
+
   .index-row {
     grid-template-columns: 1fr auto;
   }

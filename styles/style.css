@@ -312,6 +312,11 @@ body.is-intro .row-title {
   text-overflow: ellipsis;
 }
 
+/* Phone only (see below). */
+.row-title-dots {
+  display: none;
+}
+
 .row-title-pair {
   grid-column: 3;
   justify-self: end;
@@ -470,14 +475,16 @@ body.is-intro .row-title {
    of the Info / Index tabs, white at 80%, holding arrow.svg. Anchored on the
    row's centre like the images; sketch.js slides it out to the current
    image's right edge. Desktop never shows it, and it goes for good once the
-   first swipe lands (body.swipe-hint-dismissed). */
+   first swipe lands (body.swipe-hint-dismissed). Hidden on phones too for
+   now: the row title's dots show there's more to swipe to; display: flex
+   below brings it back. */
 .row-swipe-hint {
   display: none;
 }
 
 @media (max-width: 768px) {
   .row-swipe-hint {
-    display: flex;
+    display: none;
     align-items: center;
     justify-content: center;
     position: absolute;
@@ -592,13 +599,37 @@ body.is-intro .row-title {
     touch-action: pinch-zoom;
   }
 
-  /* No room for the label or the 204px pair on a phone: just the name,
-     centered, and the count on the right. */
+  /* No room for the label or the 204px pair on a phone: just the name on
+     the left, in the label's place, the count on the right, and between
+     them, centered on the screen, a dot per photo as on Instagram, the
+     current one black (see getRowDotIndex in sketch.js). */
+  .row-title {
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    column-gap: 16px;
+  }
+
+  .row-title-dots {
+    display: flex;
+    grid-column: 2;
+    color: #c0c0c0;
+  }
+
+  .row-title-dots .is-active {
+    color: var(--fg);
+  }
+
   .row-title-type {
     display: none;
   }
 
+  .row-title-cat {
+    grid-column: 1;
+    justify-self: start;
+    max-width: 100%;
+  }
+
   .row-title-pair {
+    grid-column: 3;
     width: auto;
     gap: 8px;
   }
@@ -623,7 +654,13 @@ body.is-intro .row-title {
     gap: 14px;
   }
 
+  /* Too tall to slide in over the last row (a portrait photo's height)
+     the way it does on desktop: on a phone it follows the gallery in the
+     page instead, so scrolling on past the last row brings it up from
+     below, with the gallery moving up ahead of it (see updateBottomFooter
+     in sketch.js). */
   #bottomFooter {
+    position: relative;
     padding: 20px 10px 13px;
   }
 
@@ -674,6 +711,11 @@ body.is-intro .row-title {
        row of desktop text nodes, but these items are now the nav's own
        children, so say what was meant. */
     align-items: flex-start;
+    /* 10px in from the screen's edges, like the photos: the full-width
+       logo at the start of the intro lines up to it (see measureNavLogo in
+       sketch.js). */
+    padding-left: 10px;
+    padding-right: 10px;
   }
 
   .nav-left > a,
