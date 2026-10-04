@@ -576,10 +576,10 @@ body.is-intro .row-title {
    The sizes themselves are all computed in sketch.js (refreshMetrics and
    getRowGapVh) rather than declared here, because they're derived from the
    viewport's own width and feed the same stacking math the desktop layout
-   uses. The screen shows exactly three images — one small above, one large
-   across the full width, one small below. Vertical scroll moves between them
-   the way it always did; a horizontal swipe on the large one moves along that
-   row's own images. What's left for CSS is the part only CSS can say: which
+   uses. The screen shows two images — the open row's, large across the full
+   width right under the nav, and the next row's, small below it. Vertical
+   scroll moves between them the way it always did; a horizontal swipe on the
+   large one moves along that row's own images. What's left for CSS is the part only CSS can say: which
    gestures the browser is allowed to keep for itself. */
 @media (max-width: 768px) {
   /* The gallery starts under the Info / Index buttons rather than at the
@@ -603,18 +603,13 @@ body.is-intro .row-title {
      hidden, so the gallery above ran under them. Where the browser knows
      the difference, the gallery is sized to the screen with the bars
      showing (svh), so it always clears them; when they shrink away on the
-     way down the page, it moves down by half the room they leave (the
-     difference from dvh, the screen as it is), staying centered between the
-     buttons and the foot of the screen. Its photos keep their size
+     way down the page, it stays where it is, right under the nav, and the
+     room they leave stays empty below it. Its photos keep their size
      throughout, rather than all being laid out again each time the bars
      come or go. */
   @supports (height: 1svh) {
     :root {
       --vh: calc((100svh - var(--gallery-top)) / 100);
-    }
-
-    .sticky-viewport {
-      top: calc(var(--gallery-top) + (100dvh - 100svh) / 2);
     }
   }
 
