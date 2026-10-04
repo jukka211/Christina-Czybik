@@ -461,13 +461,21 @@ body.is-intro .row-title {
    without cropping, and object-position centers it within any resulting
    empty space. > (direct children only) so none of this leaks into
    .row-column's own nested images below, which are centered on .row-column
-   itself (see further down) rather than on .row directly. */
+   itself (see further down) rather than on .row directly.
+
+   The background is the photo's small copy, which sketch.js puts there as
+   it swaps in the large one (see showLargePhotoIfNeeded), fitted exactly
+   like the photo so it only ever shows while the large one isn't painted
+   yet. */
 .row > img {
   position: absolute;
   top: 50%;
   left: 50%;
   object-fit: contain;
   object-position: center;
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
   display: block;
 }
 
