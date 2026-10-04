@@ -598,6 +598,26 @@ body.is-intro .row-title {
     top: var(--gallery-top);
   }
 
+  /* A phone browser's bars (Safari's at the bottom) cover the foot of the
+     screen while they show, and 100vh is the screen's height with them
+     hidden, so the gallery above ran under them. Where the browser knows
+     the difference, the gallery is sized to the screen with the bars
+     showing (svh), so it always clears them; when they shrink away on the
+     way down the page, it moves down by half the room they leave (the
+     difference from dvh, the screen as it is), staying centered between the
+     buttons and the foot of the screen. Its photos keep their size
+     throughout, rather than all being laid out again each time the bars
+     come or go. */
+  @supports (height: 1svh) {
+    :root {
+      --vh: calc((100svh - var(--gallery-top)) / 100);
+    }
+
+    .sticky-viewport {
+      top: calc(var(--gallery-top) + (100dvh - 100svh) / 2);
+    }
+  }
+
   /* The browser's own scroll snapping lands the page on a row, with the
      phone's momentum, once the intro is over (sketch.js adds .snap-rows
      then, see updateSnapPoints): one point per row where it rests open,
