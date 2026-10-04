@@ -26,9 +26,12 @@
   --px: calc(13.5px / 13);
   /* The gallery's height unit, written as calc(N * var(--vh)) where vh
      would be: 1vh, the screen's full height, here; on a phone, 1% of the
-     screen below the Info / Index buttons with the browser's bars showing
-     (see --gallery-top in style.css). */
+     screen below the Info / Index buttons as much of it as the browser's
+     bars leave showing (see --gallery-top in style.css). */
   --vh: 1vh;
+  /* The scroll distance's unit (see .stack-wrapper in style.css): the same
+     here, but on a phone one that holds still as the bars come and go. */
+  --scroll-vh: var(--vh);
 }
 
 @media (min-width: 769px) {

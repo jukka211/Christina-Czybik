@@ -198,12 +198,12 @@ body.is-intro .nav-center {
   text-transform: uppercase;
 }
 /* Tall scroll spacer — its length is how far you scroll to move through all
-   rows. 980 --vh is the height for five rows plus the intro; sketch.js
-   (setStackHeight) resizes it for however many rows the current view has,
-   keeping the same scroll distance per row. */
+   rows. 980 --scroll-vh is the height for five rows plus the intro;
+   sketch.js (setStackHeight) resizes it for however many rows the current
+   view has, keeping the same scroll distance per row. */
 .stack-wrapper {
   position: relative;
-  height: calc(980 * var(--vh));
+  height: calc(980 * var(--scroll-vh));
 }
 
 .sticky-viewport {
@@ -609,15 +609,18 @@ body.is-intro .row-title {
   /* A phone browser's bars (Safari's at the bottom) cover the foot of the
      screen while they show, and 100vh is the screen's height with them
      hidden, so the gallery above ran under them. Where the browser knows
-     the difference, the gallery is sized to the screen with the bars
-     showing (svh), so it always clears them; when they shrink away on the
-     way down the page, it stays where it is, right under the nav, and the
-     room they leave stays empty below it. Its photos keep their size
-     throughout, rather than all being laid out again each time the bars
-     come or go. */
-  @supports (height: 1svh) {
+     the difference, the gallery is sized to as much of the screen as the
+     bars leave (dvh): it clears them while they show, and takes the whole
+     screen again once they've shrunk away on the way down the page, the
+     small image below the open row growing into the room (sketch.js lays
+     the gallery out again as its height changes). The scroll distance
+     between rows is measured on the screen with the bars hidden (lvh)
+     instead, which holds still as they come and go, so the rows don't
+     shift under the page's scroll position when they do. */
+  @supports (height: 1dvh) {
     :root {
-      --vh: calc((100svh - var(--gallery-top)) / 100);
+      --vh: calc((100dvh - var(--gallery-top)) / 100);
+      --scroll-vh: calc((100lvh - var(--gallery-top)) / 100);
     }
   }
 
