@@ -410,9 +410,8 @@ body.is-intro .row-title {
 }
 
 /* Mobile tap feedback: the touched row's box tints from the first touch
-   until the tap opens fullscreen (sketch.js toggles the class; a swipe or
-   scroll drops it again). Fades back out with the fullscreen jump itself via
-   .fullscreen-transition above. */
+   until the tap's click, which steps the row (sketch.js toggles the class;
+   a swipe or scroll drops it again). */
 .row.is-pressed {
   background-color: #f7f7f7;
 }
