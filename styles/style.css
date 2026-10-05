@@ -463,9 +463,9 @@ body.is-intro .row-title {
    itself (see further down) rather than on .row directly.
 
    The background is the photo's small copy, which sketch.js puts there as
-   it swaps in the large one (see showLargePhotoIfNeeded), fitted exactly
-   like the photo so it only ever shows while the large one isn't painted
-   yet. */
+   it swaps in the large one and takes away again once that's on screen
+   (see showLargePhotoIfNeeded), fitted exactly like the photo so it only
+   ever shows while the large one isn't painted yet. */
 .row > img {
   position: absolute;
   top: 50%;
@@ -631,6 +631,10 @@ body.is-intro .row-title {
     scroll-snap-type: y mandatory;
   }
 
+  /* scroll-snap-stop: a flick lands on the next row rather than carrying on
+     past it. A row takes as much scroll on a phone as its photos move (see
+     getMobileScrollPxPerWeight in sketch.js), so a flick's momentum would
+     otherwise run on through two or three rows. */
   .row-snap {
     position: absolute;
     left: 0;
@@ -638,6 +642,7 @@ body.is-intro .row-title {
     height: 1px;
     pointer-events: none;
     scroll-snap-align: start;
+    scroll-snap-stop: always;
   }
 
   html.snap-rows #bottomFooter {
@@ -652,6 +657,13 @@ body.is-intro .row-title {
      take zooming away. */
   .row {
     touch-action: pan-y pinch-zoom;
+  }
+
+  /* Each photo a layer of its own, so the browser can slide and scale it as
+     the page moves from row to row or a row is swiped without painting the
+     photo again on every frame (see styleMobileImage in sketch.js). */
+  .row > img {
+    will-change: transform;
   }
 
   /* Fullscreen's column needs the vertical axis too — a drag there moves
