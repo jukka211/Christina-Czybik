@@ -21,7 +21,9 @@ export default async function HomePage() {
       <nav className="top-nav top-nav--solo" id="topNav">
         <div className="nav-block nav-center">
           {/* Back to the start: a fresh load of the page, intro and all,
-              without any panel the address had open. */}
+              without any panel the address had open. On a phone a tap
+              slides the logo away instead (see startGallery in
+              lib/gallery/sketch.js). */}
           <a href="/" className="nav-logo-link">
             <Logo />
           </a>
