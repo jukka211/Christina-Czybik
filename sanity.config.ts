@@ -9,6 +9,8 @@ import { dataset, projectId } from './sanity/env'
 import { schemaTypes } from './sanity/schemaTypes'
 import { structure } from './sanity/structure'
 
+const FIXED_DOCUMENT_TYPES = ['kategorie', 'siteInfo', 'legal']
+
 export default defineConfig({
   basePath: '/studio',
   title: 'Christina Czybik',
@@ -18,11 +20,12 @@ export default defineConfig({
   plugins: [structureTool({ structure })],
   document: {
     // The Kategorie documents are the five fixed ones in the sidebar, never
-    // new ones.
+    // new ones, and the site's texts (Info & Kontakt, Impressum &
+    // Datenschutz) one each.
     newDocumentOptions: (previous) =>
-      previous.filter((template) => template.templateId !== 'kategorie'),
+      previous.filter((template) => !FIXED_DOCUMENT_TYPES.includes(template.templateId)),
     actions: (previous, { schemaType }) =>
-      schemaType === 'kategorie'
+      FIXED_DOCUMENT_TYPES.includes(schemaType)
         ? previous.filter(({ action }) => action !== 'delete' && action !== 'duplicate' && action !== 'unpublish')
         : previous,
   },

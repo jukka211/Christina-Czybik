@@ -2,10 +2,12 @@ import { orderRankField, orderRankOrdering } from '@sanity/orderable-document-li
 import { defineArrayMember, defineField, defineType } from 'sanity'
 
 import { CATEGORIES, getCategoryTitle } from '../categories'
+import { RESERVED_SLUGS, SLUG_PATTERN, slugify } from '../slug'
 
-// A project: one row in the Index, and one row of the homepage's gallery
-// when it's switched to "Projekte". Projects show in the order they're
-// dragged into in the Studio's "Projekte" list (orderRank).
+// A project: one row in the Index, and its own page at /<slug>, which the
+// Index opens. Projects show in the order they're dragged into in the
+// Studio's "Projekte" list (orderRank), and a project page has the one
+// before it above and the one after it below.
 export const project = defineType({
   name: 'project',
   title: 'Projekt',
@@ -18,6 +20,22 @@ export const project = defineType({
       title: 'Projekt',
       type: 'string',
       validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: 'slug',
+      title: 'Adresse',
+      description:
+        'Die Adresse der Projektseite, z. B. „koenig-bansah“ für …/koenig-bansah. „Generate“ macht sie aus dem Projektnamen. Nach der Veröffentlichung nicht mehr ändern: Links auf die alte Adresse führen sonst ins Leere.',
+      type: 'slug',
+      options: { source: 'title', slugify },
+      validation: (rule) =>
+        rule.required().custom((value) => {
+          const current = value?.current
+          if (!current) return true
+          if (!SLUG_PATTERN.test(current)) return 'Nur Kleinbuchstaben, Ziffern und Bindestriche, z. B. koenig-bansah.'
+          if (RESERVED_SLUGS.includes(current)) return `„${current}“ ist schon die Adresse einer anderen Seite.`
+          return true
+        }),
     }),
     defineField({
       name: 'kategorie',

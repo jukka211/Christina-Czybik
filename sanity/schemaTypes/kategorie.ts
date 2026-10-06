@@ -2,11 +2,11 @@ import { defineArrayMember, defineField, defineType } from 'sanity'
 
 import { getCategoryTitle } from '../categories'
 
-// A category's best-of: the photos of its row on the homepage (the gallery's
-// "Kategorien" view). There is one of these per category, with a fixed ID
-// (see getKategorieDocumentId), opened from the Studio's "Kategorien
-// (Startseite)" list; they can't be created, duplicated or deleted
-// (sanity.config.ts). Which category a document belongs to is its ID.
+// A category's best-of: the photos of its row on the homepage. There is one
+// of these per category, with a fixed ID (see getKategorieDocumentId),
+// opened from the Studio's "Kategorien (Startseite)" list; they can't be
+// created, duplicated or deleted (sanity.config.ts). Which category a
+// document belongs to is its ID.
 export const kategorie = defineType({
   name: 'kategorie',
   title: 'Kategorie',

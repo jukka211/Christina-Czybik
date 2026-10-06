@@ -199,11 +199,23 @@ body.is-intro .nav-center {
 }
 /* Tall scroll spacer — its length is how far you scroll to move through all
    rows. 980 --scroll-vh is the height for five rows plus the intro;
-   sketch.js (setStackHeight) resizes it for however many rows the current
-   view has, keeping the same scroll distance per row. */
+   sketch.js (setStackHeight) resizes it for however many rows the homepage
+   has, keeping the same scroll distance per row. */
 .stack-wrapper {
   position: relative;
   height: calc(980 * var(--scroll-vh));
+}
+
+/* A project page's stack stands still (see "Project pages" in sketch.js):
+   it's the gallery's height, with the space above the gallery on a phone,
+   and the page neither scrolls nor bounces at its ends. */
+.stack-wrapper.is-project-page {
+  height: calc(100 * var(--vh) + var(--gallery-top, 0px));
+}
+
+html:has(.stack-wrapper.is-project-page) {
+  overflow: hidden;
+  overscroll-behavior: none;
 }
 
 .sticky-viewport {
@@ -296,10 +308,13 @@ body.is-intro .row-title {
    halfway point toward its neighbor (sketch.js's updateRowTitles toggles
    .is-small) fades its title out while the growing row's fades in. Two
    classes, like .row-title.nav-hidden above, to beat the plain .row-title
-   opacity. */
+   opacity. A project page's rows above and below the middle one show theirs
+   while the pointer's over them, and always on a phone (updateRowTitles
+   leaves .is-small off then). */
 .row-title.is-small {
   opacity: 0;
 }
+
 
 .row-title-type {
   grid-column: 1;
@@ -420,7 +435,8 @@ body.is-intro .row-title {
    zone (the arrow cursors, see the mousemove handler in sketch.js), that
    half of the row tints, behind its photos (a ::before paints under the
    row's own images). Not over the middle band that opens fullscreen, not in
-   fullscreen, and not behind the panels. */
+   fullscreen, and not behind the panels. A project page's row linking to
+   another project tints all over (.is-hover-all). */
 .row::before {
   content: "";
   position: absolute;
@@ -434,16 +450,22 @@ body.is-intro .row-title {
 
 @media (hover: hover) and (min-width: 769px) {
   .row.is-hover-left::before,
-  .row.is-hover-right::before {
+  .row.is-hover-right::before,
+  .row.is-hover-all::before {
     visibility: visible;
   }
 
-  .row.is-hover-left::before {
+  .row.is-hover-left::before,
+  .row.is-hover-all::before {
     left: 0;
   }
 
   .row.is-hover-right::before {
     left: 50%;
+  }
+
+  .row.is-hover-all::before {
+    width: 100%;
   }
 
   .row.is-fullscreen::before,
@@ -710,6 +732,14 @@ body.is-intro .row-title {
 
   .row-title-place {
     display: none;
+  }
+
+  /* A project page's next project, small under the middle row: its name
+     under it opens it too, a bigger target for a finger than the row alone
+     (see setUpRow). Not while it's hidden, nor through a panel. */
+  body:not(.panels-open) .row-title.is-link:not(.is-small):not(.is-offscreen):not(.nav-hidden) {
+    pointer-events: auto;
+    cursor: pointer;
   }
 
   /* Fullscreen's title sits along the bottom of the screen rather than

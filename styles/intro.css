@@ -54,10 +54,9 @@
 }
 
 /* Until the gallery's script has started (sketch.js adds .gallery-ready),
-   the logo, the switch and the footer sit where the markup puts them, not
-   in their intro positions: hidden rather than shown there for a moment. */
+   the logo and the footer sit where the markup puts them, not in their intro
+   positions: hidden rather than shown there for a moment. */
 html:not(.gallery-ready) .top-nav,
-html:not(.gallery-ready) .view-switch,
 html:not(.gallery-ready) #bottomFooter {
   visibility: hidden;
 }

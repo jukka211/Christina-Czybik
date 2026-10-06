@@ -82,8 +82,8 @@ body:not(.panels-open) .top-nav--solo:not(.nav-hidden)::before {
 
 /* --- Info / Index buttons -----------------------------------------------
    Figma 33:1316. Three columns: Info on the left, the middle slot centered
-   on the screen (not merely between two differently wide buttons), the
-   Kategorien / Projekte switch and Index on the right. */
+   on the screen (not merely between two differently wide buttons), Index on
+   the right. */
 .panel-nav {
   position: fixed;
   top: 9px;
@@ -146,30 +146,6 @@ body:not(.panels-open) .top-nav--solo:not(.nav-hidden)::before {
   justify-items: center;
 }
 
-/* The Kategorien / Projekte switch: a tab like the others, with the filter
-   icon (public/filter.svg, as a mask so it takes the text color) before the
-   view showing. The label keeps the longer name's width, so the tab doesn't
-   change size between the two, and centers the shorter one in it: a space
-   either side of "Projekte" in the monospaced type. */
-.view-switch-icon {
-  flex: none;
-  width: calc(12 * var(--px));
-  height: calc(8 * var(--px));
-  background: currentColor;
-  mask: url("/filter.svg") center / contain no-repeat;
-  transition: transform 0.3s ease;
-}
-
-/* Upside down on Projekte, turning over at each switch. */
-.view-switch[data-view="projekte"] .view-switch-icon {
-  transform: rotate(180deg);
-}
-
-.view-switch-label {
-  min-width: 10ch;
-  text-align: center;
-}
-
 /* Hover turns the gray fill white. Only where there's a real pointer, so a
    tap on a phone doesn't leave a tab stuck in its hover color. */
 @media (hover: hover) {
@@ -178,8 +154,7 @@ body:not(.panels-open) .top-nav--solo:not(.nav-hidden)::before {
   }
 }
 
-body:not(.panels-open) .panel-back,
-body.panels-open .view-switch {
+body:not(.panels-open) .panel-back {
   visibility: hidden;
   pointer-events: none;
 }
@@ -360,14 +335,23 @@ html.panels-open {
   gap: 3px;
 }
 
-/* Clicking a row shows the project on the gallery (panels.js). */
+/* Each row is a link to its project's page (panels.js). */
 .index-body .index-row {
   cursor: pointer;
 }
 
-/* The row whose photos are showing in the bottom row turns gray. */
+/* The row whose photos are showing in the bottom row turns gray, rather
+   than underlined like the panels' other links. */
 .index-body .index-row:hover {
   color: var(--panel-muted);
+  text-decoration: none;
+}
+
+/* The project whose page this is (panels.js), on the buttons' gray, which
+   reaches into the gap around the row rather than moving its text. */
+.index-body .index-row.is-current {
+  background: #f0f0f0;
+  box-shadow: 0 0 0 3px #f0f0f0;
 }
 
 /* --- Info grid ----------------------------------------------------------
@@ -464,17 +448,6 @@ html.panels-open {
   .col-year {
     grid-column: 2;
     padding-left: 1em;
-  }
-
-  /* No room for the Kategorien / Projekte switch beside Index, so it takes
-     the middle of the buttons' line, which is the logo's: it waits above the
-     screen while the logo is in place and slides down as the logo slides up
-     out of view (--logo-reveal, 1 to 0, set by sketch.js). */
-  .view-switch {
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translate(-50%, calc((-100% - 15px) * var(--logo-reveal, 1)));
   }
 
   /* One panel at a time on a phone (panels.js), each filling the screen
