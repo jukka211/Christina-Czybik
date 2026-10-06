@@ -10,7 +10,10 @@ import type { SiteData } from '@/sanity/fetch'
 // project page's (app/(site)/[slug]/page.tsx), the same but for what's in
 // the gallery, which the gallery's own script fills in (lib/gallery/,
 // started by Gallery). projectSlug: the project whose page this is, none on
-// the homepage. children: what only the page has (the homepage's footer).
+// the homepage. mobileFlat: a start page whose rows on a phone all stay
+// full width (see startGallery in lib/gallery/sketch.js). homeHref: where
+// the logo goes, the homepage unless it says otherwise. children: what only
+// the page has (the homepage's footer).
 //
 // The links to other pages are plain <a>s, not next/link: the gallery is
 // built for a fresh page load each time (the intro, and coming back to it
@@ -19,10 +22,14 @@ import type { SiteData } from '@/sanity/fetch'
 export function GalleryPage({
   data,
   projectSlug,
+  mobileFlat,
+  homeHref = '/',
   children,
 }: {
   data: SiteData
   projectSlug?: string
+  mobileFlat?: boolean
+  homeHref?: string
   children?: React.ReactNode
 }) {
   const { info } = data
@@ -36,7 +43,7 @@ export function GalleryPage({
               without any panel the address had open. (With LOGO_SLIDES on in
               lib/gallery/sketch.js, a tap on the homepage on a phone slides
               the logo away instead, see startGallery.) */}
-          <a href="/" className="nav-logo-link">
+          <a href={homeHref} className="nav-logo-link">
             <Logo />
           </a>
         </div>
@@ -168,7 +175,11 @@ export function GalleryPage({
       {children}
 
       {/* Just what the gallery needs: the texts are all in the markup. */}
-      <Gallery data={{ categories: data.categories, projects: data.projects }} projectSlug={projectSlug} />
+      <Gallery
+        data={{ categories: data.categories, projects: data.projects }}
+        projectSlug={projectSlug}
+        mobileFlat={mobileFlat}
+      />
     </>
   )
 }
