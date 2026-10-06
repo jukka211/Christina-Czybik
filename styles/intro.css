@@ -4,9 +4,10 @@
    bottom, over the full-width logo. The boxes shrink on screens too short
    for four rows of them. object-fit: contain lets landscape photos sit in
    the middle of their box, as in the design. The trailing * 0.85 shrinks
-   them 15% from that fit. */
+   them 15% from that fit, and --small-photo-shrink (theme.css) as much
+   again as it shrinks the gallery's small photos. */
 .intro-grid {
-  --intro-cell-h: calc(min(7.81vw, calc((100vh - 55px) / var(--intro-rows) - 10px)) * 0.85);
+  --intro-cell-h: calc(min(7.81vw, calc((100vh - 55px) / var(--intro-rows) - 10px)) * 0.85 / var(--small-photo-shrink, 1));
   --intro-cell-w: calc(var(--intro-cell-h) * 2 / 3);
   position: fixed;
   top: calc(var(--panel-nav-bottom) + 7px);
@@ -35,6 +36,14 @@
 
 .intro-grid-cell {
   transition: opacity 0.2s ease;
+}
+
+/* Desktop's photos either side of the logo (intro-grid.js): across the
+   grid's two middle rows, and a photo's height in the middle of them, so
+   halfway between the top and bottom rows. */
+.intro-grid-cell.is-middle {
+  align-self: center;
+  height: var(--intro-cell-h);
 }
 
 .intro-grid-cell.is-gone {
@@ -67,6 +76,13 @@ html:not(.gallery-ready) #bottomFooter {
 }
 
 body.is-intro-grid .sticky-viewport {
+  opacity: 0;
+}
+
+/* Without the logo's intro (INTRO_LOGO_PLAYS in sketch.js) the large logo
+   fades away with the grid's photos (intro-grid.js), and back in at its
+   place at the top with the gallery (.top-nav's own transition). */
+body.is-intro-logo-leaving .top-nav {
   opacity: 0;
 }
 

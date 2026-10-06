@@ -619,6 +619,9 @@ body.is-intro .row-title {
      sketch.js). */
   :root {
     --mobile-logo-width: 40vw;
+    /* The intro's large logo spans the screen on a phone, whatever
+       --intro-logo-width (theme.css) has it on a desktop. */
+    --intro-logo-width: 1;
     --gallery-top: var(--panel-nav-bottom);
     --vh: calc((100vh - var(--gallery-top)) / 100);
   }

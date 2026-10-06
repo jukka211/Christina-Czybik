@@ -32,6 +32,18 @@
   /* The scroll distance's unit (see .stack-wrapper in style.css): the same
      here, but on a phone one that holds still as the bars come and go. */
   --scroll-vh: var(--vh);
+  /* How many times smaller the small photos are drawn than the row they're
+     in, on a desktop: the rows above and below the large one, and the small
+     photos either side of it (sketch.js reads this, see refreshMetrics),
+     the Impressum's faded gallery (legal.css), and the photos of the
+     opening grid (intro.css). 1 fills the row. The rows themselves, the
+     large photo and the logo keep their sizes. */
+  --small-photo-shrink: 1.25;
+  /* How wide the logo is at the start of the homepage's intro, as a share
+     of the screen's width less the nav's side padding: 1 spans it, 0.5 is
+     half as wide. It shrinks from there to its size at the top of the
+     screen (see updateIntroLogo in sketch.js, which reads this). */
+  --intro-logo-width: 0.45;
 }
 
 @media (min-width: 769px) {

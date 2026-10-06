@@ -48,9 +48,11 @@ body:has(.legal-page) {
   align-items: center;
 }
 
+/* The small photos as small as the gallery's (--small-photo-shrink in
+   theme.css). */
 .legal-backdrop-row img {
   display: block;
-  height: 7.3vh;
+  height: calc(7.3vh / var(--small-photo-shrink, 1));
   width: auto;
 }
 
