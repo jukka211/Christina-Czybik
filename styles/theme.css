@@ -43,7 +43,7 @@
      of the screen's width less the nav's side padding: 1 spans it, 0.5 is
      half as wide. It shrinks from there to its size at the top of the
      screen (see updateIntroLogo in sketch.js, which reads this). */
-  --intro-logo-width: 0.45;
+  --intro-logo-width: 0.52;
 }
 
 @media (min-width: 769px) {

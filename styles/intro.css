@@ -79,11 +79,29 @@ body.is-intro-grid .sticky-viewport {
   opacity: 0;
 }
 
-/* Without the logo's intro (INTRO_LOGO_PLAYS in sketch.js) the large logo
-   fades away with the grid's photos (intro-grid.js), and back in at its
-   place at the top with the gallery (.top-nav's own transition). */
+/* When the intro fades (INTRO_ENDING in sketch.js) the large logo fades
+   away with the grid's photos (intro-grid.js), and back in at its place at
+   the top with the gallery (.top-nav's own transition). */
 body.is-intro-logo-leaving .top-nav {
   opacity: 0;
+}
+
+/* When it slides, row 0 takes the place of the grid's bottom row, as one
+   more switch: the gallery shows from behind the grid at once, and the
+   bottom row's photos go. The grid then goes up with the gallery's rows,
+   frame by frame (intro-grid.js), so no transition comes between. */
+body.is-intro-grid.is-intro-sliding .sticky-viewport {
+  opacity: 1;
+  transition: none;
+}
+
+.intro-grid-cell.is-swapped {
+  opacity: 0;
+  transition: none;
+}
+
+.intro-grid.is-sliding {
+  transition: none;
 }
 
 /* On a phone the boxes are sized by the width: three small columns across,
