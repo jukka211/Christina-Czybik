@@ -397,9 +397,9 @@ body.is-intro .row-title {
    swipe, where the dragged row either carries on to the next image or falls
    back to the one it started on. sketch.js adds this class only for
    SWIPE_SETTLE_MS on release, so the drag itself still tracks the finger with
-   no easing lagging behind it. The height too: a phone's start page row is
-   as tall as its photo, so one settling on a photo of another shape grows or
-   shrinks into it, and the rows below move with it. */
+   no easing lagging behind it. The height too: a phone's homepage row is
+   drawn as tall as its photo, so one settling on a photo of another shape
+   grows or shrinks into it. */
 .row.swipe-settle {
   transition: height 0.25s ease, transform 0.25s ease;
 }
@@ -408,8 +408,8 @@ body.is-intro .row-title {
   transition: width 0.25s ease, height 0.25s ease, transform 0.25s ease;
 }
 
-/* The titles are positioned off the rows' own edges, so they have to settle
-   with them. opacity is repeated from .row-title's own rule because naming
+/* The titles are positioned off the rows' own edges (on a phone's start
+   page, off their photos'), so they have to settle with them. opacity is repeated from .row-title's own rule because naming
    transition here replaces it outright. */
 .row-title.swipe-settle {
   transition: transform 0.25s ease, opacity 0.4s ease;
