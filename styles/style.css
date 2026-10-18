@@ -397,8 +397,9 @@ body.is-intro .row-title {
    swipe, where the dragged row either carries on to the next image or falls
    back to the one it started on. sketch.js adds this class only for
    SWIPE_SETTLE_MS on release, so the drag itself still tracks the finger with
-   no easing lagging behind it. transform only — nothing resizes here, unlike
-   the fullscreen jump. */
+   no easing lagging behind it. The height too: a phone's start page row is
+   as tall as its photo, so one settling on a photo of another shape grows or
+   shrinks into it, and the rows below move with it. */
 .row.swipe-settle {
   transition: height 0.25s ease, transform 0.25s ease;
 }
