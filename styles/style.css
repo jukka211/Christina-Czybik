@@ -397,10 +397,9 @@ body.is-intro .row-title {
    swipe, where the dragged row either carries on to the next image or falls
    back to the one it started on. sketch.js adds this class only for
    SWIPE_SETTLE_MS on release, so the drag itself still tracks the finger with
-   no easing lagging behind it. The height too: a phone's start page row is
+   no easing lagging behind it. The height too: a phone's homepage row is
    drawn as tall as its photo, so one settling on a photo of another shape
-   grows or shrinks into it (and on a flat start page the rows below move
-   with it). */
+   grows or shrinks into it. */
 .row.swipe-settle {
   transition: height 0.25s ease, transform 0.25s ease;
 }
@@ -703,7 +702,10 @@ body.is-intro .row-title {
   /* No room for the label or the 204px pair on a phone: just the name on
      the left, in the label's place, the count on the right, and between
      them, centered on the screen, a dot per photo as on Instagram, the
-     current one black (see getRowDotIndex in sketch.js). */
+     current one black: a strip sliding under a window ROW_DOTS dots wide,
+     its end dots small while there are more beyond them (see ROW_DOTS in
+     sketch.js, which sets the window's width and the strip's place, in the
+     mono font's 1ch a dot). */
   .row-title {
     grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
     column-gap: 16px;
@@ -712,7 +714,24 @@ body.is-intro .row-title {
   .row-title-dots {
     display: flex;
     grid-column: 2;
+    overflow: hidden;
     color: #c0c0c0;
+  }
+
+  .row-title-dots-strip {
+    display: flex;
+    transition: transform 0.25s ease;
+  }
+
+  .row-title-dots-strip > span {
+    flex: none;
+    width: 1ch;
+    text-align: center;
+    transition: color 0.25s ease, transform 0.25s ease;
+  }
+
+  .row-title-dots .is-small {
+    transform: scale(0.6);
   }
 
   .row-title-dots .is-active {
