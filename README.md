@@ -7,7 +7,7 @@ Portfolio site: [Next.js](https://nextjs.org) (App Router), content in
 
 - **Projekte**: one entry per project, with Projekt (name), Adresse (the
   slug: its page is at `/<slug>`, made from the name with "Generate"),
-  Kategorie (one of Politik, Veranstaltungen, Wirtschaft, Porträt, Personal
+  Kategorie (one of Politik, Veranstaltungen, Unterwegs, Porträt, Personal
   Projects), Auftraggeber, Ort, Jahr and its Fotos. Projects fill the Index,
   which opens their pages. A project's page has its photos in the middle row,
   and the projects before and after it in the Index above and below. Drag

@@ -7,7 +7,7 @@
 export const CATEGORIES = [
   { value: 'politik', title: 'Politik' },
   { value: 'veranstaltungen', title: 'Veranstaltungen' },
-  { value: 'wirtschaft', title: 'Wirtschaft' },
+  { value: 'wirtschaft', title: 'Unterwegs' },
   { value: 'portraet', title: 'Porträt' },
   { value: 'personal-projects', title: 'Personal Projects' },
 ] as const
