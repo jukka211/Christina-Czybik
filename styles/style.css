@@ -657,6 +657,12 @@ body.is-intro .row-title {
     scroll-snap-type: y mandatory;
   }
 
+  /* Off while the page glides on to a row by itself (a tap on the small row,
+     see setGliding in sketch.js), which snapping would hold back. */
+  html.snap-rows.is-gliding {
+    scroll-snap-type: none;
+  }
+
   /* scroll-snap-stop: a flick lands on the next row rather than carrying on
      past it. A row takes as much scroll on a phone as its photos move (see
      getMobileScrollPxPerWeight in sketch.js), so a flick's momentum would
