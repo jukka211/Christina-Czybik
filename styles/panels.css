@@ -478,4 +478,9 @@ html.panels-open {
   .info-col-bio {
     grid-column: 1 / -1;
   }
+
+  /* Ausgewählte Kunden after the bio rather than before it. */
+  .info-col-clients {
+    order: 1;
+  }
 }
