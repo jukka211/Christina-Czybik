@@ -15,6 +15,8 @@ const plexMono = IBM_Plex_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: SITE_NAME,
+  // Proves to Google Search Console that the site is ours.
+  verification: { google: 'tqg-qLLEnivP4b2BUNE4k6R7P5GZMc-lOZ4rl-Mhn2Q' },
   icons: { icon: '/favicon.svg' },
 }
 
