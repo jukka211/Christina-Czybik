@@ -4,7 +4,8 @@ import { DEFAULT_SITE_INFO } from '../texts'
 import { richTextField } from './rich-text'
 
 // The Info panel's texts (Info, Kontakt, Ausgewählte Kunden, Bio) and the
-// homepage's footer, which shows the same Kontakt. One document, opened from
+// homepage's footer, which shows the same Kontakt, and what Google and a
+// shared link's preview show of the homepage. One document, opened from
 // the Studio's "Info & Kontakt" (structure.ts); it can't be created twice,
 // duplicated or deleted (sanity.config.ts). It starts out as the texts the
 // site had before (sanity/texts.ts).
@@ -59,6 +60,22 @@ export const siteInfo = defineType({
         'Ganz unten auf der Startseite, links neben dem Kontakt (der von oben kommt). Jede Zeile hier ist eine Zeile dort.',
       type: 'text',
       rows: 3,
+    }),
+    defineField({
+      name: 'searchDescription',
+      title: 'Text bei Google',
+      description:
+        'Unter dem Titel der Website in Googles Suchergebnissen, und in der Vorschau, wenn jemand einen Link zur Website teilt. Nicht auf der Website selbst. Google zeigt davon etwa die ersten 155 Zeichen. Leer: der Text in Grau.',
+      type: 'text',
+      rows: 5,
+      placeholder: DEFAULT_SITE_INFO.searchDescription ?? undefined,
+    }),
+    defineField({
+      name: 'shareImage',
+      title: 'Vorschaubild',
+      description:
+        'Das Bild in der Vorschau, wenn jemand einen Link zur Website teilt (WhatsApp, LinkedIn, Facebook …), auf 1200 × 630 Pixel aus der Mitte zugeschnitten: am besten ein Foto im Querformat. Leer: ein Foto der Startseite.',
+      type: 'image',
     }),
   ],
   preview: {

@@ -23,6 +23,12 @@ export type SiteInfo = {
   clients: string[] | null
   bio: RichText | null
   footerInfo: string | null
+  // Not on the site: the text under its title in Google's results, and in
+  // the preview of a shared link, and that preview's photo (its URL). The
+  // site falls back to the text below, and to a photo of the start page,
+  // when they're left empty (app/(site)/page.tsx).
+  searchDescription: string | null
+  shareImage?: string | null
 }
 
 // The Datenschutz: its sections, each a heading and its text.
@@ -103,6 +109,8 @@ export const DEFAULT_SITE_INFO: SiteInfo = {
     p('Ich lege großen Wert darauf, eine verlässliche Quelle zu sein und Geschehnisse auf journalistischen Grundlagen wiederzugeben. Besonders in sozialen Medien sehe ich eine Chance, Inhalte schnell und direkt an ein breites Publikum zu transportieren.\nNeben meiner Arbeit auf dem politischen Parkett und im PR Segment von Veranstaltungen widme ich mich regelmäßig freien Fotoprojekten, die mich oft an ungewöhnliche Orte führen. Sie bieten Raum für langfristige, persönliche Dokumentationen, die die leisen, unbeachteten Details des Alltags ins Zentrum rücken.'),
   ]),
   footerInfo: 'Christina Czybik\nPHOTOGRAPHER & Photo Editor\nHamburg / Bundesweit',
+  searchDescription:
+    'Ich bin freiberufliche Fotografin aus Hamburg mit 25 Jahren Erfahrung in den Bereichen Politik, Event, Reportage und Zeitgeschehen. Meine Schwerpunkte sind die dokumentarische Fotografie, Pressefotografie, Eventdokumentationen für Unternehmen und Verbände sowie die politische Kommunikation.',
 }
 
 export const DEFAULT_LEGAL: Legal = {

@@ -6,6 +6,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
 import { GalleryPage } from '@/components/GalleryPage'
+import { getShareImage, OPEN_GRAPH, SITE_NAME } from '@/lib/site'
 import { getSiteData } from '@/sanity/fetch'
 
 // What's published in the Studio shows here within a minute.
@@ -20,20 +21,21 @@ export async function generateStaticParams() {
   return projects.map(({ slug }) => ({ slug }))
 }
 
-// The project's name in the browser's tab, and its first photo, name and
-// details in the preview of a shared link (Open Graph). The photo is a JPEG:
-// not every app that shows previews takes the formats auto=format picks.
+// The project's name in the browser's tab and Google's results, its details
+// under it, and its first photo, name and details in the preview of a
+// shared link (Open Graph).
 export async function generateMetadata({ params }: ProjectPageProps): Promise<Metadata> {
   const { slug } = await params
   const project = (await getSiteData()).projects.find((candidate) => candidate.slug === slug)
   if (!project) return {}
-  const title = `${project.title} — Christina Czybik`
-  const description = [project.category, project.client, project.place, project.year].filter(Boolean).join(' · ')
-  const image = `${project.photos[0].url}?${new URLSearchParams({ w: '1200', h: '630', fit: 'crop', fm: 'jpg', q: '80' })}`
+  const title = `${project.title} — ${SITE_NAME}`
+  const details = [project.category, project.client, project.place, project.year].filter(Boolean).join(' · ')
+  const description = `${details}. Fotografie von ${SITE_NAME}, Hamburg.`
   return {
     title,
     description,
-    openGraph: { title, description, type: 'website', images: [{ url: image, width: 1200, height: 630 }] },
+    alternates: { canonical: `/${slug}` },
+    openGraph: { ...OPEN_GRAPH, title, description, url: `/${slug}`, images: [getShareImage(project.photos[0].url)] },
   }
 }
 

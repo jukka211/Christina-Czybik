@@ -10,6 +10,7 @@ import { getLegal, getSiteData } from '@/sanity/fetch'
 
 export const metadata: Metadata = {
   title: 'Impressum & Datenschutz — Christina Czybik',
+  alternates: { canonical: '/impressum' },
 }
 
 export const revalidate = 60

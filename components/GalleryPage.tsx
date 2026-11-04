@@ -4,6 +4,7 @@ import { ContactLines } from '@/components/ContactLines'
 import { Gallery } from '@/components/Gallery'
 import { Logo } from '@/components/Logo'
 import { RichText, TextLines } from '@/components/RichText'
+import { HOME_TITLE, SITE_NAME } from '@/lib/site'
 import type { SiteData } from '@/sanity/fetch'
 
 // A gallery page's markup: the homepage's (app/(site)/page.tsx) and a
@@ -34,9 +35,14 @@ export function GalleryPage({
 }) {
   const { info } = data
   const clients = (info.clients ?? []).filter(Boolean)
+  const project = projectSlug ? data.projects.find((candidate) => candidate.slug === projectSlug) : undefined
 
   return (
     <>
+      {/* What the page is, for search engines and screen readers: the logo
+          says it to the eye. */}
+      <h1 className="visually-hidden">{project ? `${project.title} — ${SITE_NAME}` : HOME_TITLE}</h1>
+
       <nav className="top-nav top-nav--solo" id="topNav">
         <div className="nav-block nav-center">
           {/* Back to the start: a fresh load of the homepage, intro and all,

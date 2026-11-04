@@ -26,7 +26,11 @@ const SITE_QUERY = defineQuery(`{
     jahr,
     "photos": fotos[defined(asset)]{ "url": asset->url, "aspect": asset->metadata.dimensions.aspectRatio }
   },
-  "info": *[_id == $siteInfoId][0]{ info, phone, email, instagram, clients, bio, footerInfo }
+  "info": *[_id == $siteInfoId][0]{
+    info, phone, email, instagram, clients, bio, footerInfo,
+    searchDescription,
+    "shareImage": shareImage.asset->url
+  }
 }`)
 
 const LEGAL_QUERY = defineQuery(`*[_id == $legalId][0]{
