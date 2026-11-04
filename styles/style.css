@@ -191,6 +191,13 @@ body.is-intro .nav-center {
   text-decoration: underline;
 }
 
+/* Nothing on the start page can be selected (the page with the footer:
+   the homepage, and /test-startpage). */
+body:has(.site-footer) {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
 .footer-legal {
   position: absolute;
   right: 11px;
