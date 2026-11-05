@@ -9,7 +9,7 @@ export const SITE_NAME = 'Christina Czybik'
 
 // The homepage's title in Google's results and the browser's tab, and its
 // heading (for search engines and screen readers, not shown).
-export const HOME_TITLE = 'Christina Czybik — Fotografin in Hamburg'
+export const HOME_TITLE = 'Christina Czybik — Fotografin für Politik, Event und Reportage'
 
 // What a page's preview takes besides its own title, description, address
 // and photo. A page's openGraph replaces the layout's whole, so each page

@@ -17,7 +17,14 @@ export const metadata: Metadata = {
   title: SITE_NAME,
   // Proves to Google Search Console that the site is ours.
   verification: { google: 'tqg-qLLEnivP4b2BUNE4k6R7P5GZMc-lOZ4rl-Mhn2Q' },
-  icons: { icon: '/favicon.svg' },
+  // The site's mark, and the same as an .ico (16, 32 and 48 px) for what
+  // doesn't take an SVG.
+  icons: {
+    icon: [
+      { url: '/favicon.ico', sizes: '48x48' },
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+    ],
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
